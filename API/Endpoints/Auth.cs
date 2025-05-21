@@ -11,6 +11,7 @@ public static class Auth
         var group = app.MapGroup("auth");
         group.MapPost("login", Login);
         group.MapPost("register", Register);
+        group.MapPost("refresh", Refresh);
     }
 
     public static IResult Register(RegisterUserRequest request, IAuthService authService)
@@ -43,4 +44,10 @@ public static class Auth
             ? Results.Ok(token) 
             : Results.BadRequest("Password and email don't match");
     }
+
+    public static IResult Refresh(RefreshUserRequest request, IAuthService authService)
+    {
+       var token = authService.RefreshAccessToken(request.Id, request.RefreshToken);
+       return token is not null ? Results.Ok(token) : Results.Unauthorized();
+    } 
 }

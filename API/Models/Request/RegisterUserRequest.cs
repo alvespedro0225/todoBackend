@@ -1,6 +1,8 @@
 namespace API.Models.Request;
 
-public sealed record RegisterUserRequest(
-    string Name,
-    string Email,
-    string Password);
+public sealed record RegisterUserRequest
+{
+    public required string Name { get; init; }
+    public required string Email { get; init; }
+    public required string Password { get; init; }
+};

@@ -1,9 +1,11 @@
 namespace API.Models.Request;
 
-public sealed record UpdateTodoRequest(
-    string Name,
-    string Description,
-    Guid Id,
-    DateTime CreatedAt,
-    DateTime UpdatedAt,
-    Guid Owner);
+public sealed record UpdateTodoRequest
+{
+    public required string Name { get; init; }
+    public required string Description { get; init; }
+    public Guid Id { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+    public Guid Owner { get; init; }
+}

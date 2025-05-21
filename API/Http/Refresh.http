@@ -1,0 +1,10 @@
+@todoBackend_HostAddress = http://localhost:5151
+
+POST {{todoBackend_HostAddress}}/auth/refresh/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "43dc595c-57f5-4bb8-924f-1a6fb6aff09d",
+  "refreshToken": "3X8lPnVlD7Wf3HC16UhJJOfxrpva8k77EjPGvDX2Azg="
+}

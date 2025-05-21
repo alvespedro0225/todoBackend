@@ -2,9 +2,7 @@ namespace Application.Services.Auth;
 
 public record AuthResponse
 {
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public required string Token { get; set; }
-
-    public Guid Id { get; set; }
+    public required string RefreshToken { get; set; }
+    public required string AccessToken { get; set; }
+    public required Guid UserId { get; set; }
 }
