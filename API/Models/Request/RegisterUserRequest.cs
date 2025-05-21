@@ -2,7 +2,7 @@ namespace API.Models.Request;
 
 public sealed record RegisterUserRequest
 {
-    public required string Name { get; init; }
-    public required string Email { get; init; }
-    public required string Password { get; init; }
+    public string Name { get; init; } = null!;
+    public string Email { get; init; } = null!;
+    public string Password { get; init; } = null!;
 };

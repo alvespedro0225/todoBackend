@@ -20,7 +20,7 @@ public static class Auth
         var validationResult = validator.Validate(request);
 
         if (!validationResult.IsValid)
-            Results.BadRequest(validationResult.Errors);
+            return Results.BadRequest(validationResult.Errors);
         
         var registration = authService.Register(request.Name, request.Email, request.Password);
 
@@ -45,9 +45,15 @@ public static class Auth
             : Results.BadRequest("Password and email don't match");
     }
 
-    public static IResult Refresh(RefreshUserRequest request, IAuthService authService)
+    public static IResult Refresh(RefreshTokenRequest request, IAuthService authService)
     {
-       var token = authService.RefreshAccessToken(request.Id, request.RefreshToken);
-       return token is not null ? Results.Ok(token) : Results.Unauthorized();
-    } 
+        var requestValidator = new RefreshTokenRequestValidator();
+        var validationResult = requestValidator.Validate(request);
+        
+        if (!validationResult.IsValid)
+            return Results.BadRequest(validationResult.Errors);
+        
+        var token = authService.RefreshAccessToken(request.Id, request.RefreshToken); 
+        return token is not null ? Results.Ok(token) : Results.Unauthorized();
+    }
 }

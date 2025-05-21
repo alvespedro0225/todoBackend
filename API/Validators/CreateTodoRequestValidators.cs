@@ -8,7 +8,7 @@ internal class CreateTodoRequestValidators : AbstractValidator<CreateTodoRequest
     internal CreateTodoRequestValidators(CreateTodoRequest request)
     {
         RuleFor(todoRequest => todoRequest.Name)
-            .NotNull()
+            .NotEmpty()
             .MinimumLength(2)
             .MaximumLength(30);
 
@@ -17,6 +17,6 @@ internal class CreateTodoRequestValidators : AbstractValidator<CreateTodoRequest
             .MaximumLength(200);
 
         RuleFor(todoRequest => todoRequest.Status)
-            .NotNull();
+            .NotEmpty();
     }
 }

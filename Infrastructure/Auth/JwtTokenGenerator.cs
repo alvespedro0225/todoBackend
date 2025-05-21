@@ -30,7 +30,7 @@ public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerato
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:AccessExpirationInMinutes")),
             Audience = configuration["Jwt:Audience"],
-            Issuer = configuration["Issuer"],
+            Issuer = configuration["Jwt:Issuer"],
             SigningCredentials = signingCredentials
         };
 

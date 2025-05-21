@@ -8,17 +8,18 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
     public RegisterUserRequestValidator()
     {
         RuleFor(user => user.Name)
-            .NotNull()
+            .NotEmpty()
             .MinimumLength(2)
             .MaximumLength(40);
 
         RuleFor(user => user.Password)
-            .NotNull()
+            .NotEmpty()
             .MinimumLength(8)
             .MaximumLength(40);
 
         RuleFor(user => user.Email)
-            .NotNull()
+            .NotEmpty()
+            .EmailAddress()
             .MaximumLength(40);
     }
 }

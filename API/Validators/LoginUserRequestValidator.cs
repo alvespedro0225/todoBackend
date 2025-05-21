@@ -8,11 +8,12 @@ public class LoginUserRequestValidator : AbstractValidator<LoginUserRequest>
     public LoginUserRequestValidator()
     {
         RuleFor(request => request.Email)
-            .NotNull()
+            .NotEmpty()
+            .EmailAddress()
             .MaximumLength(50);
 
         RuleFor(request => request.Password)
-            .NotNull()
+            .NotEmpty()
             .MinimumLength(8)
             .MaximumLength(40);
     }
