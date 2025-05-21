@@ -1,0 +1,10 @@
+@todoBackend_HostAddress = http://localhost:5151
+
+POST {{todoBackend_HostAddress}}/auth/login/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "pedro1",
+    "password": "12345678"
+}
