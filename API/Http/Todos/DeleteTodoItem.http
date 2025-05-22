@@ -1,0 +1,12 @@
+@id = d36c26a3-c0e4-442e-b864-868b96cc54c1
+
+DELETE {{HostAddress}}/{{TodosAddress}}/{{id}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDc5Mjc2NzEsImVtYWlsIjoicGVkcm9AcCIsImp0aSI6ImEzYTlmYjYyLTA1YWEtNDJlYy05ZjkwLTk3YTY4ZmI3NGUxNyIsInN1YiI6ImVmM2ZmZGQ2LTE1ZGItNDQ3Yy1hNWVmLTllNWEzMjY5NjI5MiIsIm5hbWUiOiJQZWRybyIsImlhdCI6MTc0NzkyNzA3MSwibmJmIjoxNzQ3OTI3MDcxfQ.DdhNuZ4Due6sxhPUsQ3Gu7-r_T1upb6B490eqZnFIJg
+
+{
+  "name": "name",
+  "description": "",
+  "status": 0
+}

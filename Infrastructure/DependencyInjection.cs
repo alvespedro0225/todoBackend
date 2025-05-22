@@ -1,7 +1,8 @@
-using Application.Common.Interfaces.Auth;
-using Application.Common.Interfaces.Services;
+using Application.Common.Auth;
+using Application.Common.Repositories;
+using Application.Services.Implementations;
 using Infrastructure.Auth;
-using Infrastructure.Services;
+using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
@@ -10,8 +11,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITodoItemRepository, TodosRepository>();
         return services;
     }
 }

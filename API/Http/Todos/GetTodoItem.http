@@ -1,0 +1,4 @@
+@id = 1
+
+GET {{HostAddress}}/{{$TodosAddress}}/{{id}}
+Accept: application/json

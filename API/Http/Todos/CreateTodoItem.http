@@ -1,0 +1,10 @@
+POST {{HostAddress}}/{{TodosAddress}}/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDc5Mjk4ODcsImVtYWlsIjoicGVkcm9AcCIsImp0aSI6IjVmNWU1Y2RmLTQ5NGEtNDc3Yy05MDI4LTY1OWNiOTg0YTFmYiIsInN1YiI6IjI3YTgwZTU1LTU2ZTUtNDIzYS1iMTMyLTAxZWU0ODVhMjhlOSIsIm5hbWUiOiJQZWRybyIsImlhdCI6MTc0NzkyOTI4NywibmJmIjoxNzQ3OTI5Mjg3fQ.P5mfVV7HywkA0ePLaT5bLxxl8Eg3FOJtg0s5XKTSzzE
+
+{
+  "name": "name",
+  "description": "",
+  "status": 3
+}

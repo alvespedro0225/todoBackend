@@ -1,7 +1,8 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Application.Common.Interfaces.Auth;
+using Application.Common.Auth;
+using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +12,7 @@ namespace Infrastructure.Auth;
 
 public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerator
 {
-    public string GenerateAccessToken(Guid id, string name, string email)
+    public string GenerateAccessToken(User user)
     {
         var secretKey = configuration["Jwt:Secret"]!;
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -19,10 +20,10 @@ public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerato
         
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Email, email),
+            new(JwtRegisteredClaimNames.Email, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, id.ToString()),
-            new(JwtRegisteredClaimNames.Name, name)
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Name, user.Name)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor

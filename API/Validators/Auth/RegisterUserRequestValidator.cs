@@ -1,7 +1,7 @@
 using API.Models.Request;
 using FluentValidation;
 
-namespace API.Validators;
+namespace API.Validators.Auth;
 
 public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
 {

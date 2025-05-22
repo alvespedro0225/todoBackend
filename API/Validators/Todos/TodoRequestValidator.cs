@@ -1,11 +1,12 @@
-using API.Models.Request;
+using Application.Models.Request.Todos;
+using Domain;
 using FluentValidation;
 
-namespace API.Validators;
+namespace API.Validators.Todos;
 
-internal class CreateTodoRequestValidators : AbstractValidator<CreateTodoRequest>
+internal class TodoRequestValidator : AbstractValidator<TodosServiceRequest>
 {
-    internal CreateTodoRequestValidators(CreateTodoRequest request)
+    internal TodoRequestValidator()
     {
         RuleFor(todoRequest => todoRequest.Name)
             .NotEmpty()
@@ -17,6 +18,7 @@ internal class CreateTodoRequestValidators : AbstractValidator<CreateTodoRequest
             .MaximumLength(200);
 
         RuleFor(todoRequest => todoRequest.Status)
-            .NotEmpty();
+            .NotEmpty()
+            .IsInEnum();
     }
 }

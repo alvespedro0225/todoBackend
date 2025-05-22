@@ -1,6 +1,9 @@
 using API.Models.Request;
 using API.Validators;
-using Application.Services.Auth;
+using API.Validators.Auth;
+using Application.Services;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace API.Endpoints;
 
@@ -14,46 +17,54 @@ public static class Auth
         group.MapPost("refresh", Refresh);
     }
 
-    public static IResult Register(RegisterUserRequest request, IAuthService authService)
+    public static IResult Register(RegisterUserRequest registerRequest, IAuthService authService)
     {
-        var validator = new RegisterUserRequestValidator();
-        var validationResult = validator.Validate(request);
+        var validationResult = ValidateAuth(
+            new RegisterUserRequestValidator(),
+            registerRequest,
+            out var errors);
 
-        if (!validationResult.IsValid)
-            return Results.BadRequest(validationResult.Errors);
+        if (!validationResult)
+            return Results.BadRequest(errors);
         
-        var registration = authService.Register(request.Name, request.Email, request.Password);
+        var registration = authService.Register(registerRequest.Name, registerRequest.Email, registerRequest.Password);
 
-        return registration is not null 
-            ? Results.Ok(registration) 
-            : Results.UnprocessableEntity("Email already registered");
+        return Results.Ok(registration);
     }
 
-    public static IResult Login(LoginUserRequest request, IAuthService authService)
+    public static IResult Login(LoginUserRequest loginRequest, IAuthService authService)
     {
-        var validator = new LoginUserRequestValidator();
-        var validationResult = validator.Validate(request);
-        if (!validationResult.IsValid)
-        {
-            return Results.BadRequest(validationResult.Errors);
-        }
+        var validationResult = ValidateAuth(
+            new LoginUserRequestValidator(),
+            loginRequest,
+            out var errors);
+        
+        if (!validationResult)
+            return Results.BadRequest(validationResult);
 
-        var token = authService.Login(request.Email, request.Password);
+        var token = authService.Login(loginRequest.Email, loginRequest.Password);
 
-        return token is not null 
-            ? Results.Ok(token) 
-            : Results.BadRequest("Password and email don't match");
+        return Results.Ok(token);
     }
 
-    public static IResult Refresh(RefreshTokenRequest request, IAuthService authService)
+    public static IResult Refresh(RefreshTokenRequest refreshTokenRequest, IAuthService authService)
     {
-        var requestValidator = new RefreshTokenRequestValidator();
-        var validationResult = requestValidator.Validate(request);
+        var validationResult = ValidateAuth(
+            new RefreshTokenRequestValidator(),
+            refreshTokenRequest,
+            out var errors);
         
-        if (!validationResult.IsValid)
-            return Results.BadRequest(validationResult.Errors);
+        if (!validationResult)
+            return Results.BadRequest(validationResult);
         
-        var token = authService.RefreshAccessToken(request.Id, request.RefreshToken); 
-        return token is not null ? Results.Ok(token) : Results.Unauthorized();
+        var token = authService.RefreshAccessToken(refreshTokenRequest.Id, refreshTokenRequest.RefreshToken); 
+        return Results.Ok(token);
+    }
+    
+    private static bool ValidateAuth<T>(AbstractValidator<T> validator, T todo, out List<ValidationFailure> errors)
+    {
+        var validationResult = validator.Validate(todo);
+        errors = validationResult.Errors;
+        return validationResult.IsValid;
     }
 }
