@@ -1,8 +1,8 @@
 using System.Security.Claims;
+using API.Models.Request.Todos;
 using API.Utilities;
 using API.Validators.Todos;
-using Application.Common.Todos;
-using Application.Services;
+using Application.Common.Todos.Models.Requests;
 using Application.Services.Todos.Commands;
 using Application.Services.Todos.Queries;
 using Domain.Entities;
@@ -46,12 +46,20 @@ public static class Todos
 
     public static IResult CreateTodoItem(
         ITodosCommandService todosCommandService,
-        TodosServiceRequest requestTodo,
+        TodoRequest todoRequest,
         HttpContext context)
     {
-        ValidateTodo(new TodoRequestValidator(), requestTodo);
+        ValidateTodo(new TodoRequestValidator(), todoRequest);
         var userId = GetUserId(context);
-        var todo = todosCommandService.CreateTodoItem(userId, requestTodo);
+        
+        var todo = todosCommandService.CreateTodoItem(new CreateTodoCommandRequest
+        {
+            OwnerId = userId,
+            Name = todoRequest.Name,
+            Description = todoRequest.Description,
+            Status = todoRequest.Status
+        });
+        
         return Results.Ok(todo);
     }
 
@@ -59,13 +67,20 @@ public static class Todos
         ITodosQueryService todosQueryService,
         ITodosCommandService todosCommandService,
         HttpContext context,
-        TodosServiceRequest requestTodo,
+        TodoRequest todoRequest,
         Guid todoId)
     {
-        ValidateTodo(new TodoRequestValidator(), requestTodo);
+        ValidateTodo(new TodoRequestValidator(), todoRequest);
         var todo = todosQueryService.GetTodo(todoId);
         VerifyTodo(todo, context);
-        todo = todosCommandService.UpdateTodoItem(todo!, requestTodo);
+
+        todo = todosCommandService.UpdateTodoItem(todo!, new UpdateTodoCommandRequest
+        {
+            Name = todoRequest.Name,
+            Description = todoRequest.Description,
+            Status = todoRequest.Status
+        });
+        
         return Results.Ok(todo);
     }
 

@@ -1,6 +1,6 @@
 namespace Application.Common.Auth.Models.Requests;
 
-public sealed record AuthRegisterRequest
+public sealed record RegisterCommandRequest
 {
     public required string Name { get; set; }
     public required string Email { get; init; }

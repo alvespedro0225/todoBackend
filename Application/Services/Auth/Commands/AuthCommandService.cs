@@ -18,16 +18,16 @@ public sealed class AuthCommandService(
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
     
-    public AuthResponse Register(AuthRegisterRequest registerRequest)
+    public AuthResponse Register(RegisterCommandRequest registerCommandRequest)
     {
-        if (userRepository.GetUser(registerRequest.Email) is not null)
+        if (userRepository.GetUser(registerCommandRequest.Email) is not null)
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
         
         var user = new User
         {
-            Name = registerRequest.Name,
-            Email = registerRequest.Email,
-            Password = registerRequest.Password,
+            Name = registerCommandRequest.Name,
+            Email = registerCommandRequest.Email,
+            Password = registerCommandRequest.Password,
             RefreshToken = tokenGenerator.GenerateRefreshToken(),
             RefreshTokenExpiration = dateTime.UtcNow.AddMinutes(_refreshExpirationTime)
         };

@@ -6,6 +6,6 @@ namespace Application.Services.Auth.Queries;
 
 public interface IAuthQueryService
 {
-    public AuthResponse Login(AuthLoginRequest loginRequest);
-    public string RefreshAccessToken(AuthRefreshRequest refreshRequest);
+    public AuthResponse Login(LoginCommandRequest loginCommandRequest);
+    public string RefreshAccessToken(RefreshCommandRequest refreshCommandRequest);
 }

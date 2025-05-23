@@ -19,12 +19,12 @@ public static class Auth
     }
 
     public static IResult Register(
-        RegisterUserRequest registerRequest,
+        RegisterRequest registerRequest,
         IAuthCommandService authCommandService)
     {
-        ValidateAuth(new RegisterUserRequestValidator(), registerRequest);
+        ValidateAuth(new RegisterRequestValidator(), registerRequest);
 
-        var registration = authCommandService.Register(new AuthRegisterRequest
+        var registration = authCommandService.Register(new RegisterCommandRequest
         {
             Name = registerRequest.Name,
             Email = registerRequest.Email,
@@ -35,12 +35,12 @@ public static class Auth
     }
 
     public static IResult Login(
-        LoginUserRequest loginRequest,
+        LoginRequest loginRequest,
         IAuthQueryService authQueryService)
     {
-        ValidateAuth(new LoginUserRequestValidator(), loginRequest);
+        ValidateAuth(new LoginRequestValidator(), loginRequest);
 
-        var token = authQueryService.Login(new AuthLoginRequest
+        var token = authQueryService.Login(new LoginCommandRequest
         {
             Email = loginRequest.Email,
             Password = loginRequest.Password
@@ -50,17 +50,17 @@ public static class Auth
     }
 
     public static IResult Refresh(
-        RefreshTokenRequest refreshTokenRequest,
+        RefreshRequest refreshRequest,
         IAuthQueryService authQueryService)
     {
         ValidateAuth(
-            new RefreshTokenRequestValidator(),
-            refreshTokenRequest);
+            new RefreshRequestValidator(),
+            refreshRequest);
 
-        var token = authQueryService.RefreshAccessToken(new AuthRefreshRequest
+        var token = authQueryService.RefreshAccessToken(new RefreshCommandRequest
         {
-            UserId = refreshTokenRequest.Id,
-            RefreshToken = refreshTokenRequest.RefreshToken
+            UserId = refreshRequest.Id,
+            RefreshToken = refreshRequest.RefreshToken
         });
         
         return Results.Ok(token);

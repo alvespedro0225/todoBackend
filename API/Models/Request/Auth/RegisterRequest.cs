@@ -1,6 +1,6 @@
 namespace API.Models.Request.Auth;
 
-public sealed record RegisterUserRequest
+public sealed record RegisterRequest
 {
     public string Name { get; init; } = null!;
     public string Email { get; init; } = null!;
