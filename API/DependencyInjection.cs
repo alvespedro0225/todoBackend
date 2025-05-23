@@ -1,46 +1,25 @@
-using System.Text;
 using API.Endpoints;
 using API.Utilities;
-using Application;
-using Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 namespace API;
 
 public static class DependencyInjection
 {
-    public static void ConfigureApiServices(this IHostApplicationBuilder builder)
+    public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
-        var audience = builder.Configuration["Jwt:Audience"] 
-                       ?? throw new NullReferenceException("Missing audience");
-        var issuer = builder.Configuration["Jwt:Issuer"] 
-                     ?? throw new NullReferenceException("Missing issuer");
-        var securityKey = builder.Configuration["Jwt:Secret"] 
-                          ?? throw new NullReferenceException("Missing secret key");
+        services.AddExceptionHandling();
+        return services;
+    }
 
-        builder.Services.AddOpenApi();
+    public static void MapApiEndpoints(this WebApplication app)
+    {
+        app.MapAuthEndpoints();
+        app.MapTodosEndpoints();
+    }
 
-        builder.Services
-            .AddApplication()
-            .AddInfrastructure();
-
-        builder.Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidAudience = audience,
-                    ValidIssuer = issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey))
-                };
-            });
-
-        builder.Services.AddAuthorization();
-
-        builder.Services.AddProblemDetails(options =>
+    private static IServiceCollection AddExceptionHandling(this IServiceCollection services)
+    {
+        services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
             {
@@ -49,20 +28,7 @@ public static class DependencyInjection
             };
         });
         
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-    }
-
-    public static void ConfigureAppUses(this WebApplication app)
-    {
-        app.UseExceptionHandler();
-        app.UseHttpsRedirection();
-        app.UseAuthentication();
-        app.UseAuthorization();
-    }
-
-    public static void MapApiEndpoints(this WebApplication app)
-    {
-        app.MapAuthEndpoints();
-        app.MapTodosEndpoints();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        return services;
     }
 }
