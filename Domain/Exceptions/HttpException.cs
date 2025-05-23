@@ -12,6 +12,4 @@ public abstract class HttpException : Exception
     public HttpException(string message) : base(message)
     { }
 
-    public HttpException(string error, string message) : base(message)
-    { }
 }

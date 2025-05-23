@@ -6,7 +6,7 @@ public sealed class UnprocessableEntityException : HttpException
     public override int StatusCode => 422;
     public override string Type => "Unprocessable Entity";
     
-    public UnprocessableEntityException() : base()
+    public UnprocessableEntityException()
     { }
 
     public UnprocessableEntityException(string message) : base(message)

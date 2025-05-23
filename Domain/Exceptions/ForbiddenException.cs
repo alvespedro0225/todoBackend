@@ -6,13 +6,13 @@ public sealed class ForbiddenException : HttpException
     public override int StatusCode => 403;
     public override string Type => "Forbidden Exception";
     
-    public ForbiddenException() : base()
+    public ForbiddenException()
     { }
     
     public ForbiddenException(string message) : base(message)
     { }
 
-    public ForbiddenException(string error, string message) : base()
+    public ForbiddenException(string error, string message) : base(message)
     {
         Error = error;
     }

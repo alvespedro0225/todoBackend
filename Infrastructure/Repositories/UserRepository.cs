@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public sealed class UserRepository : IUserRepository
 {
     private static readonly List<User> Users = []; 
     

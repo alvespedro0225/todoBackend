@@ -6,7 +6,7 @@ public sealed class NotFoundException : HttpException
     public override int StatusCode => 404;
     public override string Type => "Not Found";
 
-    public NotFoundException() : base()
+    public NotFoundException()
     { }
 
     public NotFoundException(string message) : base(message)

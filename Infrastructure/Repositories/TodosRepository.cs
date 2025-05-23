@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Infrastructure.Repositories;
 
-public class TodosRepository : ITodoItemRepository
+public sealed class TodosRepository : ITodoItemRepository
 {
     private static readonly List<TodoItem> Todos = [];
     

@@ -6,7 +6,7 @@ public sealed class UnauthorizedException : HttpException
     public override int StatusCode => 401;
     public override string Type => "Unauthorized";
     
-    public UnauthorizedException() : base()
+    public UnauthorizedException()
     { }
     
     public UnauthorizedException(string message) : base(message)

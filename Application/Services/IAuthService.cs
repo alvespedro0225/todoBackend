@@ -1,5 +1,4 @@
 using Application.Models.Response;
-using Domain.Entities;
 
 namespace Application.Services;
 

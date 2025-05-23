@@ -10,7 +10,7 @@ using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredCla
 
 namespace Infrastructure.Auth;
 
-public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerator
+public sealed class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerator
 {
     public string GenerateAccessToken(User user)
     {

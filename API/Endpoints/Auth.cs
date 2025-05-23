@@ -1,4 +1,5 @@
 using API.Models.Request;
+using API.Models.Request.Auth;
 using API.Validators.Auth;
 using Application.Services;
 using FluentValidation;

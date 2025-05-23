@@ -1,6 +1,5 @@
 using Application.Common.Auth;
 using Application.Common.Repositories;
-using Application.Services.Implementations;
 using Infrastructure.Auth;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;

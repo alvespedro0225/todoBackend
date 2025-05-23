@@ -6,7 +6,7 @@ public sealed class BadRequestException : HttpException
     public override int StatusCode => 400;
     public override string Type => "Bad Request";
 
-    public BadRequestException() : base()
+    public BadRequestException()
     { }
     
     public BadRequestException(string message) : base(message)
