@@ -1,4 +1,4 @@
-namespace Application.Common.Auth;
+namespace Application.Common.Auth.Models.Responses;
 
 public sealed record AuthResponse
 {

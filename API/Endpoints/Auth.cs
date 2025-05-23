@@ -1,5 +1,7 @@
 using API.Models.Request.Auth;
 using API.Validators.Auth;
+using Application.Common.Auth;
+using Application.Common.Auth.Models.Requests;
 using Application.Services.Auth.Commands;
 using Application.Services.Auth.Queries;
 using FluentValidation;
@@ -16,34 +18,51 @@ public static class Auth
         group.MapPost("refresh", Refresh);
     }
 
-    public static IResult Register(RegisterUserRequest registerRequest, IAuthCommandService authCommandService)
+    public static IResult Register(
+        RegisterUserRequest registerRequest,
+        IAuthCommandService authCommandService)
     {
         ValidateAuth(new RegisterUserRequestValidator(), registerRequest);
-        
-        var registration = authCommandService.Register(
-            registerRequest.Name,
-            registerRequest.Email,
-            registerRequest.Password);
+
+        var registration = authCommandService.Register(new AuthRegisterRequest
+        {
+            Name = registerRequest.Name,
+            Email = registerRequest.Email,
+            Password = registerRequest.Password
+        });
 
         return Results.Ok(registration);
     }
 
-    public static IResult Login(LoginUserRequest loginRequest, IAuthQueryService authQueryService)
+    public static IResult Login(
+        LoginUserRequest loginRequest,
+        IAuthQueryService authQueryService)
     {
         ValidateAuth(new LoginUserRequestValidator(), loginRequest);
 
-        var token = authQueryService.Login(loginRequest.Email, loginRequest.Password);
+        var token = authQueryService.Login(new AuthLoginRequest
+        {
+            Email = loginRequest.Email,
+            Password = loginRequest.Password
+        });
 
         return Results.Ok(token);
     }
 
-    public static IResult Refresh(RefreshTokenRequest refreshTokenRequest, IAuthQueryService authQueryService)
+    public static IResult Refresh(
+        RefreshTokenRequest refreshTokenRequest,
+        IAuthQueryService authQueryService)
     {
         ValidateAuth(
             new RefreshTokenRequestValidator(),
             refreshTokenRequest);
+
+        var token = authQueryService.RefreshAccessToken(new AuthRefreshRequest
+        {
+            UserId = refreshTokenRequest.Id,
+            RefreshToken = refreshTokenRequest.RefreshToken
+        });
         
-        var token = authQueryService.RefreshAccessToken(refreshTokenRequest.Id, refreshTokenRequest.RefreshToken); 
         return Results.Ok(token);
     }
     

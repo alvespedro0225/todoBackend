@@ -1,8 +1,10 @@
 using Application.Common.Auth;
-using Application.Common.Exceptions;
+using Application.Common.Auth.Models.Requests;
+using Application.Common.Auth.Models.Responses;
 using Application.Common.Repositories;
 using Application.Services.Common;
 using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Commands;
@@ -16,16 +18,16 @@ public sealed class AuthCommandService(
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
     
-    public AuthResponse Register(string name, string email, string password)
+    public AuthResponse Register(AuthRegisterRequest registerRequest)
     {
-        if (userRepository.GetUser(email) is not null)
+        if (userRepository.GetUser(registerRequest.Email) is not null)
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
         
         var user = new User
         {
-            Name = name,
-            Email = email,
-            Password = password,
+            Name = registerRequest.Name,
+            Email = registerRequest.Email,
+            Password = registerRequest.Password,
             RefreshToken = tokenGenerator.GenerateRefreshToken(),
             RefreshTokenExpiration = dateTime.UtcNow.AddMinutes(_refreshExpirationTime)
         };

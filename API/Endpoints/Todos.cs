@@ -1,12 +1,12 @@
 using System.Security.Claims;
 using API.Utilities;
 using API.Validators.Todos;
-using Application.Common.Exceptions;
 using Application.Common.Todos;
 using Application.Services;
 using Application.Services.Todos.Commands;
 using Application.Services.Todos.Queries;
 using Domain.Entities;
+using Domain.Exceptions;
 using FluentValidation;
 
 namespace API.Endpoints;

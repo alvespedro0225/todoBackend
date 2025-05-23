@@ -1,4 +1,4 @@
-namespace Application.Common.Exceptions;
+namespace Domain.Exceptions;
 
 public sealed class UnprocessableEntityException(string error, string message) : Exception(message), IHttpException
 {

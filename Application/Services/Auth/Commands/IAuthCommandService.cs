@@ -1,8 +1,9 @@
-using Application.Common.Auth;
+using Application.Common.Auth.Models.Requests;
+using Application.Common.Auth.Models.Responses;
 
 namespace Application.Services.Auth.Commands;
 
 public interface IAuthCommandService
 {
-    public AuthResponse Register(string name, string email, string password);
+    public AuthResponse Register(AuthRegisterRequest registerRequest);
 }

@@ -1,7 +1,9 @@
 using Application.Common.Auth;
-using Application.Common.Exceptions;
+using Application.Common.Auth.Models.Requests;
+using Application.Common.Auth.Models.Responses;
 using Application.Common.Repositories;
 using Application.Services.Common;
+using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Queries;
@@ -14,12 +16,12 @@ public sealed class AuthQueryService(
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
     
-    public AuthResponse Login(string email, string password)
+    public AuthResponse Login(AuthLoginRequest loginRequest)
     {
-        var user = userRepository.GetUser(email);
+        var user = userRepository.GetUser(loginRequest.Email);
         
         if (user is null ||
-            password != user.Password)
+            loginRequest.Password != user.Password)
             throw new UnauthorizedException("Error during login", "Password and email don't match");
         
         user.RefreshToken = tokenGenerator.GenerateRefreshToken();
@@ -35,14 +37,14 @@ public sealed class AuthQueryService(
         return response;
     }
     
-    public string RefreshAccessToken(Guid userId, string providedToken)
+    public string RefreshAccessToken(AuthRefreshRequest refreshRequest)
     {
-        var user = userRepository.GetUser(userId);
+        var user = userRepository.GetUser(refreshRequest.UserId);
 
         if (user is null)
             throw new NotFoundException("User not found", "Make sure this user is registered");
                 
-        if(user.RefreshToken != providedToken)
+        if(user.RefreshToken != refreshRequest.RefreshToken)
             throw new UnauthorizedException("Invalid refresh token", "Make sure you have the right token");
                         
         if (user.RefreshTokenExpiration <= dateTime.UtcNow)
