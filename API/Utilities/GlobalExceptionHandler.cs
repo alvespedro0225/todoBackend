@@ -1,5 +1,5 @@
 using System.Text;
-using Domain.Exceptions;
+using Application.Common.Exceptions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Diagnostics;
@@ -25,7 +25,7 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
         
         switch (exception)
         {
-            case HttpException httpException:
+            case IHttpException httpException:
                 response.StatusCode = httpException.StatusCode;
                 problemDetails = CreateProblemDetails(httpException);
                 break;
@@ -47,7 +47,7 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
             });
     }
 
-    private static ProblemDetails CreateProblemDetails(HttpException exception)
+    private static ProblemDetails CreateProblemDetails(IHttpException exception)
     {
         var problemDetails = new ProblemDetails
         {

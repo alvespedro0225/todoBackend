@@ -1,8 +1,8 @@
 using Application.Common.Auth;
+using Application.Common.Exceptions;
 using Application.Common.Repositories;
 using Application.Models.Response;
 using Domain.Entities;
-using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Implementations;
