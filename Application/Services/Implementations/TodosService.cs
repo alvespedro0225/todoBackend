@@ -8,33 +8,27 @@ public sealed class TodosService(
     ITodoItemRepository todosRepository,
     IDateTimeProvider dateTime) : ITodosService
 {
-    public List<TodoItem> GetTodos(Guid ownerId)
+    public List<TodoItem> GetTodos(User owner)
     {
-        return todosRepository.GetTodos(ownerId);
+        return todosRepository.GetTodos(owner);
     }
 
-    public TodoItem GetTodo(Guid id)
+    public TodoItem? GetTodo(Guid id)
     {
         var todo = todosRepository.GetTodoItem(id);
-        
-        if (todo is null)
-            throw new Exception("Todo is null");
-
         return todo;
     }
 
-    public TodoItem UpdateTodoItem(Guid id, TodosServiceRequest updatedTodos)
+    public TodoItem UpdateTodoItem(TodoItem oldTodo, TodosServiceRequest updatedTodo)
     {
-        
-        var todo = GetTodo(id);
-        todo.Name = updatedTodos.Name;
-        todo.Status = updatedTodos.Status;
-        todo.Description = updatedTodos.Description;
-        todo.UpdatedAt = dateTime.Offset;
-        return todo;
+        oldTodo.Name = updatedTodo.Name;
+        oldTodo.Status = updatedTodo.Status;
+        oldTodo.Description = updatedTodo.Description;
+        oldTodo.UpdatedAt = dateTime.Offset;
+        return oldTodo;
     }
 
-    public TodoItem CreateTodoItem(Guid ownerId, TodosServiceRequest newTodosService)
+    public TodoItem CreateTodoItem(User owner, TodosServiceRequest newTodosService)
     {
         var now = dateTime.Offset;
         
@@ -45,15 +39,14 @@ public sealed class TodosService(
             CreatedAt = now,
             UpdatedAt = now,
             Status = newTodosService.Status,
-            Owner = ownerId
+            Owner = owner
         };
         todosRepository.AddTodoItem(todo);
         return todo;
     }
 
-    public void DeleteTodoItem(Guid id)
+    public void DeleteTodoItem(TodoItem todo)
     {
-        var todo = GetTodo(id);
         todosRepository.DeleteTodoItem(todo);
     }
 }

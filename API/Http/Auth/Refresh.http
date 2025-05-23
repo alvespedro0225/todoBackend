@@ -1,6 +1,4 @@
-@todoBackend_HostAddress = http://localhost:5151
-
-POST {{todoBackend_HostAddress}}/auth/refresh/
+POST {{HostAddress}}/{{AuthAddress}}/refresh/
 Accept: application/json
 Content-Type: application/json
 

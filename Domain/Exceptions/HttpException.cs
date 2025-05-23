@@ -1,0 +1,14 @@
+namespace Domain.Exceptions;
+
+public abstract class HttpException : Exception
+{
+    public abstract string? Error { get; }
+    public abstract int StatusCode { get; }
+    public abstract string Type { get; }
+
+    public HttpException() : base()
+    { }
+    
+    public HttpException(string message) : base(message)
+    { }
+}

@@ -7,9 +7,9 @@ public class TodosRepository : ITodoItemRepository
 {
     private static readonly List<TodoItem> Todos = [];
     
-    public List<TodoItem> GetTodos(Guid ownerId)
+    public List<TodoItem> GetTodos(User owner)
     {
-        return Todos.Where(todo => todo.Owner == ownerId).ToList();
+        return Todos.Where(todo => todo.Owner.Id == owner.Id).ToList();
     }
 
     public TodoItem? GetTodoItem(Guid id)

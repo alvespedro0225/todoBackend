@@ -5,9 +5,9 @@ namespace Application.Services;
 
 public interface ITodosService
 {
-    public List<TodoItem> GetTodos(Guid ownerId);
-    public TodoItem GetTodo(Guid id);
-    public TodoItem CreateTodoItem(Guid ownerId, TodosServiceRequest newTodosService);
-    public TodoItem UpdateTodoItem(Guid id, TodosServiceRequest updatedTodos);
-    public void DeleteTodoItem(Guid id);
+    public List<TodoItem> GetTodos(User owner);
+    public TodoItem? GetTodo(Guid id);
+    public TodoItem CreateTodoItem(User owner, TodosServiceRequest newTodosService);
+    public TodoItem UpdateTodoItem(TodoItem todo, TodosServiceRequest updatedTodo);
+    public void DeleteTodoItem(TodoItem todo);
 }
