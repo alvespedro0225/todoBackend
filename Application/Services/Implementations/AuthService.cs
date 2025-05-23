@@ -1,8 +1,8 @@
-using System.Security.Authentication;
 using Application.Common.Auth;
 using Application.Common.Repositories;
 using Application.Models.Response;
 using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Implementations;
@@ -19,11 +19,11 @@ public sealed class AuthService(
     
     public AuthServiceResponse Login(string email, string password)
     {
-        var user = userRepository.GetUserFromEmail(email);
+        var user = userRepository.GetUser(email);
         
         if (user is null ||
             password != user.Password)
-            throw new InvalidCredentialException("Password and email don't match");
+            throw new UnauthorizedException("Error during login", "Password and email don't match");
         
         user.RefreshToken = tokenGenerator.GenerateRefreshToken();
         user.RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(_refreshExpirationTime);
@@ -40,8 +40,8 @@ public sealed class AuthService(
 
     public AuthServiceResponse Register(string name, string email, string password)
     {
-        if (userRepository.GetUserFromEmail(email) is not null)
-            throw new Exception("Email already registered");
+        if (userRepository.GetUser(email) is not null)
+            throw new UnprocessableEntityException("Email already registered", "Please use another email");
         
         var user = new User
         {
@@ -63,18 +63,18 @@ public sealed class AuthService(
         return response;
     }
 
-    public string RefreshAccessToken(Guid id, string providedToken)
+    public string RefreshAccessToken(Guid userId, string providedToken)
     {
-        var user = userRepository.GetUserFromId(id);
+        var user = userRepository.GetUser(userId);
 
         if (user is null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User not found", "Make sure this user is registered");
                 
         if(user.RefreshToken != providedToken)
-            throw new Exception("Invalid refresh token");
+            throw new UnauthorizedException("Invalid refresh token", "Make sure you have the right token");
                         
         if (user.RefreshTokenExpiration <= dateTime.UtcNow)
-            throw new Exception("Expired refresh token");
+            throw new UnauthorizedException("Expired refresh token", "Login again to get a new token");
 
         return tokenGenerator.GenerateAccessToken(user);
     }

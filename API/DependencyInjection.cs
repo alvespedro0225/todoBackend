@@ -1,6 +1,6 @@
 using System.Text;
 using API.Endpoints;
-using API.Filters;
+using API.Utilities;
 using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -8,14 +8,14 @@ public sealed class TodosService(
     ITodoItemRepository todosRepository,
     IDateTimeProvider dateTime) : ITodosService
 {
-    public List<TodoItem> GetTodos(User owner)
+    public List<TodoItem> GetTodos(Guid owner)
     {
         return todosRepository.GetTodos(owner);
     }
 
-    public TodoItem? GetTodo(Guid id)
+    public TodoItem? GetTodo(Guid todoId)
     {
-        var todo = todosRepository.GetTodoItem(id);
+        var todo = todosRepository.GetTodoItem(todoId);
         return todo;
     }
 

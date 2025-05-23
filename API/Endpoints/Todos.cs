@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using API.Filters;
+using API.Utilities;
 using API.Validators.Todos;
 using Application.Common.Repositories;
 using Application.Models.Request.Todos;
 using Application.Services;
+using Domain.Entities;
 using Domain.Exceptions;
 using FluentValidation;
-using FluentValidation.Results;
 
 namespace API.Endpoints;
 
@@ -23,63 +23,65 @@ public static class Todos
         group.MapDelete("{todoId:guid}", DeleteTodoItem);
     }
 
-    public static IResult GetTodos(ITodosService todosService, HttpContext context)
+    public static IResult GetTodos(
+        ITodosService todosService,
+        HttpContext context)
     {
-        
         var userId = GetUserId(context);
-        
         var todos = todosService.GetTodos(userId);
+
         return Results.Ok(todos);
     }
 
-    public static IResult GetTodoItem(ITodosService todosService, Guid todoId)
+    public static IResult GetTodoItem(
+        ITodosService todosService,
+        HttpContext context,
+        Guid todoId)
     {
         var todo = todosService.GetTodo(todoId);
+        VerifyTodo(todo, context);
         return Results.Ok(todo);
     }
 
-    public static IResult CreateTodoItem(ITodosService todosService, TodosServiceRequest requestTodo, HttpContext context)
+    public static IResult CreateTodoItem(
+        ITodosService todosService,
+        IUserRepository userRepository,
+        TodosServiceRequest requestTodo,
+        HttpContext context)
     {
-        var validationResult = ValidateTodo(
-            new TodoRequestValidator(),
-            requestTodo,
-            out var errors);
-
-        if (!validationResult)
-            return Results.BadRequest(errors);
-
+        ValidateTodo(new TodoRequestValidator(), requestTodo);
         var userId = GetUserId(context);
-        var todo = todosService.CreateTodoItem(userId, requestTodo);
+        var user = userRepository.GetUser(userId);
+
+        if (user is null)
+            throw new NotFoundException(
+                DefaultErrorMessages.UserNotFoundError,
+                DefaultErrorMessages.UserNotFoundMessage);
+
+        var todo = todosService.CreateTodoItem(user, requestTodo);
         return Results.Ok(todo);
     }
 
-    public static IResult UpdateTodoItem(ITodosService todosService, TodosServiceRequest requestTodo, Guid todoId)
+    public static IResult UpdateTodoItem(
+        ITodosService todosService,
+        HttpContext context,
+        TodosServiceRequest requestTodo,
+        Guid todoId)
     {
-        var validationResult = ValidateTodo(
-            new TodoRequestValidator(),
-            requestTodo,
-            out var errors);
-        
-        if (!validationResult)
-            return Results.BadRequest(errors);
-        
+        ValidateTodo(new TodoRequestValidator(), requestTodo);
         var todo = todosService.GetTodo(todoId);
-
-        if (todo is null)
-            throw new NotFoundException("Todo not found", "Make sure the todo exists and you have the correct ID");
-        
-        todo = todosService.UpdateTodoItem(todo, requestTodo);
+        todo = todosService.UpdateTodoItem(todo!, requestTodo);
         return Results.Ok(todo);
     }
 
-    public static IResult DeleteTodoItem(ITodosService todosService, Guid todoId)
+    public static IResult DeleteTodoItem(
+        ITodosService todosService,
+        HttpContext context,
+        Guid todoId)
     {
         var todo = todosService.GetTodo(todoId);
-
-        if (todo is null)
-            throw new NotFoundException();
-        
-        todosService.DeleteTodoItem(todo);
+        VerifyTodo(todo, context);
+        todosService.DeleteTodoItem(todo!);
         return Results.NoContent();
     }
 
@@ -87,14 +89,14 @@ public static class Todos
     {
         var user = context.User;
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        
+
         if (userIdClaim is null)
             throw new UnauthorizedException(
                 "Missing Name Identifier Claim",
                 "Make sure this is a registered user");
 
         var stringUserId = userIdClaim.Value;
-        
+
         if (!Guid.TryParse(stringUserId, out var userId))
             throw new UnauthorizedException(
                 "Invalid Name Identifier Claim",
@@ -103,10 +105,23 @@ public static class Todos
         return userId;
     }
 
-    private static bool ValidateTodo<T>(AbstractValidator<T> validator, T todo, out List<ValidationFailure> errors)
+    private static void ValidateTodo<T>(AbstractValidator<T> validator, T todo)
     {
-        var validationResult = validator.Validate(todo);
-        errors = validationResult.Errors;
-        return validationResult.IsValid;
+        validator.ValidateAndThrow(todo);
+    }
+    
+    private static void VerifyTodo(TodoItem? todo, HttpContext context)
+    {
+        if (todo is null)
+            throw new NotFoundException(
+                DefaultErrorMessages.TodoNotFoundError,
+                DefaultErrorMessages.TodoNotFoundMessage);
+        
+        var userId = GetUserId(context);
+        
+        if (todo.Owner.Id != userId)
+            throw new ForbiddenException(
+                DefaultErrorMessages.ForbiddenError,
+                DefaultErrorMessages.ForbiddenTodoMessage);
     }
 }

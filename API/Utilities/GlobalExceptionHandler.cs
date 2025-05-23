@@ -2,7 +2,7 @@ using Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Filters;
+namespace API.Utilities;
 
 public class GlobalExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {

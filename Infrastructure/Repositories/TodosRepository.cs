@@ -7,14 +7,14 @@ public class TodosRepository : ITodoItemRepository
 {
     private static readonly List<TodoItem> Todos = [];
     
-    public List<TodoItem> GetTodos(User owner)
+    public List<TodoItem> GetTodos(Guid ownerId)
     {
-        return Todos.Where(todo => todo.Owner.Id == owner.Id).ToList();
+        return Todos.Where(todo => todo.Owner.Id == ownerId).ToList();
     }
 
-    public TodoItem? GetTodoItem(Guid id)
+    public TodoItem? GetTodoItem(Guid todoId)
     {
-        return Todos.FirstOrDefault(todo => todo.Id == id);
+        return Todos.FirstOrDefault(todo => todo.Id == todoId);
     }
 
     public void UpdateTodoItem(TodoItem oldTodo, TodoItem updatedTodo)

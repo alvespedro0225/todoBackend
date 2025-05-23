@@ -7,12 +7,12 @@ public class UserRepository : IUserRepository
 {
     private static readonly List<User> Users = []; 
     
-    public User? GetUserFromId(Guid id)
+    public User? GetUser(Guid id)
     {
         return Users.FirstOrDefault(user => user.Id == id);
     }
 
-    public User? GetUserFromEmail(string email)
+    public User? GetUser(string email)
     {
         return Users.FirstOrDefault(user => user.Email == email);
     }

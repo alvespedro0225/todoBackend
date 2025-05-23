@@ -1,6 +1,6 @@
 namespace Domain.Exceptions;
 
-public class UnauthorizedException : HttpException
+public sealed class UnauthorizedException : HttpException
 {
     public override string? Error { get; }
     public override int StatusCode => 401;
