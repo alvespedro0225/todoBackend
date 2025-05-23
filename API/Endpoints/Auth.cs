@@ -1,8 +1,7 @@
-using API.Models.Request;
 using API.Models.Request.Auth;
 using API.Validators.Auth;
-using Application.Services;
 using Application.Services.Auth.Commands;
+using Application.Services.Auth.Queries;
 using FluentValidation;
 
 namespace API.Endpoints;
@@ -29,22 +28,22 @@ public static class Auth
         return Results.Ok(registration);
     }
 
-    public static IResult Login(LoginUserRequest loginRequest, IAuthCommandService authCommandService)
+    public static IResult Login(LoginUserRequest loginRequest, IAuthQueryService authQueryService)
     {
         ValidateAuth(new LoginUserRequestValidator(), loginRequest);
 
-        var token = authCommandService.Login(loginRequest.Email, loginRequest.Password);
+        var token = authQueryService.Login(loginRequest.Email, loginRequest.Password);
 
         return Results.Ok(token);
     }
 
-    public static IResult Refresh(RefreshTokenRequest refreshTokenRequest, IAuthCommandService authCommandService)
+    public static IResult Refresh(RefreshTokenRequest refreshTokenRequest, IAuthQueryService authQueryService)
     {
         ValidateAuth(
             new RefreshTokenRequestValidator(),
             refreshTokenRequest);
         
-        var token = authCommandService.RefreshAccessToken(refreshTokenRequest.Id, refreshTokenRequest.RefreshToken); 
+        var token = authQueryService.RefreshAccessToken(refreshTokenRequest.Id, refreshTokenRequest.RefreshToken); 
         return Results.Ok(token);
     }
     

@@ -3,6 +3,6 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "email": "pedro@p",
-    "password": "12345678"
+    "email": "{{Email}}",
+    "password": "{{Password}}"
 }

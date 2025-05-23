@@ -48,7 +48,7 @@ public static class DependencyInjection
                     $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
             };
         });
-
+        
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     }
 

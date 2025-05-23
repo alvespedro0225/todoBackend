@@ -1,12 +1,10 @@
 using Application.Common.Todos;
 using Domain.Entities;
 
-namespace Application.Services;
+namespace Application.Services.Todos.Commands;
 
-public interface ITodosService
+public interface ITodosCommandService
 {
-    public List<TodoItem> GetTodos(Guid ownerId);
-    public TodoItem? GetTodo(Guid todoId);
     public TodoItem CreateTodoItem(Guid ownerId, TodosServiceRequest newTodosService);
     public TodoItem UpdateTodoItem(TodoItem todo, TodosServiceRequest updatedTodo);
     public void DeleteTodoItem(TodoItem todo);

@@ -30,6 +30,14 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
                 problemDetails = CreateProblemDetails(httpException);
                 break;
             
+            case BadHttpRequestException badRequestException:
+                response.StatusCode = badRequestException.StatusCode;
+                problemDetails.Status = badRequestException.StatusCode;
+                problemDetails.Type = "Bad Request";
+                problemDetails.Detail = badRequestException.Message;
+                problemDetails.Title = "There was an issue with the requests";
+                break;
+            
             case ValidationException validationException:
                 response.StatusCode = StatusCodes.Status400BadRequest;
                 problemDetails.Status = StatusCodes.Status400BadRequest;
@@ -37,6 +45,8 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
                 problemDetails.Detail = GetValidationMessages(validationException.Errors);
                 problemDetails.Title = "There was an issue validating the item";
                 break;
+            
+            default: return false;
         }
 
         return await problemDetailsService.TryWriteAsync(

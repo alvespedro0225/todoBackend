@@ -1,9 +1,7 @@
-@id = 189e621d-42c5-4f2f-96af-2755eed88841
-
-PUT {{HostAddress}}/{{TodosAddress}}/{{id}}
+PUT {{HostAddress}}/{{TodosAddress}}/{{TodoId}}
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDgwMTA5NjksImVtYWlsIjoicGVkcm9kQGRmcCIsImp0aSI6ImY2Y2M4NzdjLTBlM2MtNDQyZC05ODYzLTcwODY5ZmM5MjZiYiIsInN1YiI6IjZiMjgzNzA4LTFjNzEtNDgwNS05YmY5LTA5NjI2MGQzNzg0MSIsIm5hbWUiOiJQZWRybyIsImlhdCI6MTc0ODAxMDM2OSwibmJmIjoxNzQ4MDEwMzY5fQ.RnT8z5ao8Tjm9Xqh4Vy8YUiHgHMRtkn_liLYQiiVhYQ
+Authorization: Bearer {{JWT}}
 
 {
   "name": "dd",

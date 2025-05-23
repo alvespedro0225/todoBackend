@@ -3,23 +3,12 @@ using Application.Common.Todos;
 using Application.Services.Common;
 using Domain.Entities;
 
-namespace Application.Services.Implementations;
+namespace Application.Services.Todos.Commands;
 
-public sealed class TodosService(
+public sealed class TodosCommandService(
     ITodoItemRepository todosRepository,
-    IDateTimeProvider dateTime) : ITodosService
+    IDateTimeProvider dateTime) : ITodosCommandService
 {
-    public List<TodoItem> GetTodos(Guid owner)
-    {
-        return todosRepository.GetTodos(owner);
-    }
-
-    public TodoItem? GetTodo(Guid todoId)
-    {
-        var todo = todosRepository.GetTodoItem(todoId);
-        return todo;
-    }
-
     public TodoItem UpdateTodoItem(TodoItem oldTodo, TodosServiceRequest updatedTodo)
     {
         oldTodo.Name = updatedTodo.Name;

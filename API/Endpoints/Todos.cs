@@ -4,6 +4,8 @@ using API.Validators.Todos;
 using Application.Common.Exceptions;
 using Application.Common.Todos;
 using Application.Services;
+using Application.Services.Todos.Commands;
+using Application.Services.Todos.Queries;
 using Domain.Entities;
 using FluentValidation;
 
@@ -23,57 +25,59 @@ public static class Todos
     }
 
     public static IResult GetTodos(
-        ITodosService todosService,
+        ITodosQueryService todosQueryService,
         HttpContext context)
     {
         var userId = GetUserId(context);
-        var todos = todosService.GetTodos(userId);
+        var todos = todosQueryService.GetTodos(userId);
 
         return Results.Ok(todos);
     }
 
     public static IResult GetTodoItem(
-        ITodosService todosService,
+        ITodosQueryService todosQueryService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosService.GetTodo(todoId);
+        var todo = todosQueryService.GetTodo(todoId);
         VerifyTodo(todo, context);
         return Results.Ok(todo);
     }
 
     public static IResult CreateTodoItem(
-        ITodosService todosService,
+        ITodosCommandService todosCommandService,
         TodosServiceRequest requestTodo,
         HttpContext context)
     {
         ValidateTodo(new TodoRequestValidator(), requestTodo);
         var userId = GetUserId(context);
-        var todo = todosService.CreateTodoItem(userId, requestTodo);
+        var todo = todosCommandService.CreateTodoItem(userId, requestTodo);
         return Results.Ok(todo);
     }
 
     public static IResult UpdateTodoItem(
-        ITodosService todosService,
+        ITodosQueryService todosQueryService,
+        ITodosCommandService todosCommandService,
         HttpContext context,
         TodosServiceRequest requestTodo,
         Guid todoId)
     {
         ValidateTodo(new TodoRequestValidator(), requestTodo);
-        var todo = todosService.GetTodo(todoId);
+        var todo = todosQueryService.GetTodo(todoId);
         VerifyTodo(todo, context);
-        todo = todosService.UpdateTodoItem(todo!, requestTodo);
+        todo = todosCommandService.UpdateTodoItem(todo!, requestTodo);
         return Results.Ok(todo);
     }
 
     public static IResult DeleteTodoItem(
-        ITodosService todosService,
+        ITodosQueryService todosQueryService,
+        ITodosCommandService todosCommandService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosService.GetTodo(todoId);
+        var todo = todosQueryService.GetTodo(todoId);
         VerifyTodo(todo, context);
-        todosService.DeleteTodoItem(todo!);
+        todosCommandService.DeleteTodoItem(todo!);
         return Results.NoContent();
     }
 

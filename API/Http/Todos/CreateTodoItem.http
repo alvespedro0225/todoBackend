@@ -1,7 +1,7 @@
 POST {{HostAddress}}/{{TodosAddress}}/
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDgwMTA5MTgsImVtYWlsIjoicGVkcm9AZGZwIiwianRpIjoiN2NlNWM3MGYtNDA1MS00NDlkLTg5MmEtZTY3NDljMzQ0M2UyIiwic3ViIjoiMTNjNzQ4M2QtNDhjOC00NjFjLTk0NDUtODlkYzFkZmQ0YWQ2IiwibmFtZSI6IlBlZHJvIiwiaWF0IjoxNzQ4MDEwMzE4LCJuYmYiOjE3NDgwMTAzMTh9.Mhft0mVnBz7majTcX9CQc54Bw9oUVvUsYeREn_UowsM
+Authorization: Bearer {{JWT}}
 
 {
   "name": "name",
