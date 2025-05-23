@@ -1,5 +1,6 @@
 using Application.Common.Repositories;
-using Application.Models.Request.Todos;
+using Application.Common.Todos;
+using Application.Services.Common;
 using Domain.Entities;
 
 namespace Application.Services.Implementations;

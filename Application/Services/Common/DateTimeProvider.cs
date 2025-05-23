@@ -1,4 +1,4 @@
-namespace Application.Services.Implementations;
+namespace Application.Services.Common;
 
 public sealed class DateTimeProvider : IDateTimeProvider
 {

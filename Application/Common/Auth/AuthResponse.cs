@@ -1,6 +1,6 @@
-namespace Application.Models.Response;
+namespace Application.Common.Auth;
 
-public sealed record AuthServiceResponse
+public sealed record AuthResponse
 {
     public required string RefreshToken { get; set; }
     public required string AccessToken { get; set; }

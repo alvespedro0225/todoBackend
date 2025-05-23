@@ -1,7 +1,6 @@
-using Domain;
 using Domain.Enums;
 
-namespace Application.Models.Request.Todos;
+namespace Application.Common.Todos;
 
 public sealed record TodosServiceRequest
 {

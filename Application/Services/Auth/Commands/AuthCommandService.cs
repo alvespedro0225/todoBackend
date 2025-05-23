@@ -1,23 +1,23 @@
 using Application.Common.Auth;
 using Application.Common.Exceptions;
 using Application.Common.Repositories;
-using Application.Models.Response;
+using Application.Services.Common;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 
-namespace Application.Services.Implementations;
+namespace Application.Services.Auth.Commands;
 
-public sealed class AuthService(
+public sealed class AuthCommandService(
     IJwtTokenGenerator tokenGenerator,
     IDateTimeProvider dateTime,
     IConfiguration configuration,
     IUserRepository userRepository)
-    : IAuthService
+    : IAuthCommandService
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
 
     
-    public AuthServiceResponse Login(string email, string password)
+    public AuthResponse Login(string email, string password)
     {
         var user = userRepository.GetUser(email);
         
@@ -28,7 +28,7 @@ public sealed class AuthService(
         user.RefreshToken = tokenGenerator.GenerateRefreshToken();
         user.RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(_refreshExpirationTime);
         
-        var response = new AuthServiceResponse
+        var response = new AuthResponse
         {
             AccessToken = tokenGenerator.GenerateAccessToken(user),
             RefreshToken = user.RefreshToken,
@@ -38,7 +38,7 @@ public sealed class AuthService(
         return response;
     }
 
-    public AuthServiceResponse Register(string name, string email, string password)
+    public AuthResponse Register(string name, string email, string password)
     {
         if (userRepository.GetUser(email) is not null)
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
@@ -54,7 +54,7 @@ public sealed class AuthService(
         
         userRepository.AddUser(user);
         
-        var response = new AuthServiceResponse
+        var response = new AuthResponse
         {
             AccessToken = tokenGenerator.GenerateAccessToken(user),
             RefreshToken = user.RefreshToken,

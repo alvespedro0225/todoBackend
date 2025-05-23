@@ -2,7 +2,7 @@ using System.Security.Claims;
 using API.Utilities;
 using API.Validators.Todos;
 using Application.Common.Exceptions;
-using Application.Models.Request.Todos;
+using Application.Common.Todos;
 using Application.Services;
 using Domain.Entities;
 using FluentValidation;
