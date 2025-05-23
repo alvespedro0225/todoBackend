@@ -8,5 +8,4 @@ public sealed record User
     public Guid Id { get; set; } = Guid.NewGuid();
     public string RefreshToken { get; set; } = null!;
     public DateTime RefreshTokenExpiration { get; set; }
-    public Guid Owner { get; set; } 
 }

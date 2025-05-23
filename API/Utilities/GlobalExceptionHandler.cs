@@ -1,4 +1,7 @@
+using System.Text;
 using Domain.Exceptions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,9 +25,17 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
         
         switch (exception)
         {
-            case HttpException apiException:
-                response.StatusCode = apiException.StatusCode;
-                problemDetails = CreateProblemDetails(apiException);
+            case HttpException httpException:
+                response.StatusCode = httpException.StatusCode;
+                problemDetails = CreateProblemDetails(httpException);
+                break;
+            
+            case ValidationException validationException:
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Type = "Bad Request";
+                problemDetails.Detail = GetValidationMessages(validationException.Errors);
+                problemDetails.Title = "There was an issue validating the item";
                 break;
         }
 
@@ -46,5 +57,16 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
             Type = exception.Type
         };
         return problemDetails;
+    }
+
+    private static string GetValidationMessages(IEnumerable<ValidationFailure> validationExceptionErrors)
+    {
+        var message = new StringBuilder();
+        foreach (var validationFailure in validationExceptionErrors)
+        {
+            message.AppendLine(validationFailure.ErrorMessage);
+        }
+
+        return message.ToString();
     }
 }

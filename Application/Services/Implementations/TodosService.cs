@@ -28,7 +28,7 @@ public sealed class TodosService(
         return oldTodo;
     }
 
-    public TodoItem CreateTodoItem(User owner, TodosServiceRequest newTodosService)
+    public TodoItem CreateTodoItem(Guid ownerId, TodosServiceRequest newTodosService)
     {
         var now = dateTime.Offset;
         
@@ -39,7 +39,7 @@ public sealed class TodosService(
             CreatedAt = now,
             UpdatedAt = now,
             Status = newTodosService.Status,
-            Owner = owner
+            UserId = ownerId
         };
         todosRepository.AddTodoItem(todo);
         return todo;

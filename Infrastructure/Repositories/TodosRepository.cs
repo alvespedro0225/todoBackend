@@ -9,7 +9,7 @@ public sealed class TodosRepository : ITodoItemRepository
     
     public List<TodoItem> GetTodos(Guid ownerId)
     {
-        return Todos.Where(todo => todo.Owner.Id == ownerId).ToList();
+        return Todos.Where(todo => todo.UserId == ownerId).ToList();
     }
 
     public TodoItem? GetTodoItem(Guid todoId)

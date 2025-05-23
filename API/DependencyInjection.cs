@@ -54,10 +54,10 @@ public static class DependencyInjection
 
     public static void ConfigureAppUses(this WebApplication app)
     {
+        app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseExceptionHandler();
     }
 
     public static void MapApiEndpoints(this WebApplication app)

@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using API.Utilities;
 using API.Validators.Todos;
-using Application.Common.Repositories;
 using Application.Models.Request.Todos;
 using Application.Services;
 using Domain.Entities;
@@ -19,7 +18,7 @@ public static class Todos
         group.MapGet("", GetTodos);
         group.MapGet("{todoId:guid}", GetTodoItem);
         group.MapPost("", CreateTodoItem);
-        group.MapPost("{todoId:guid}", UpdateTodoItem);
+        group.MapPut("{todoId:guid}", UpdateTodoItem);
         group.MapDelete("{todoId:guid}", DeleteTodoItem);
     }
 
@@ -45,20 +44,12 @@ public static class Todos
 
     public static IResult CreateTodoItem(
         ITodosService todosService,
-        IUserRepository userRepository,
         TodosServiceRequest requestTodo,
         HttpContext context)
     {
         ValidateTodo(new TodoRequestValidator(), requestTodo);
         var userId = GetUserId(context);
-        var user = userRepository.GetUser(userId);
-
-        if (user is null)
-            throw new NotFoundException(
-                DefaultErrorMessages.UserNotFoundError,
-                DefaultErrorMessages.UserNotFoundMessage);
-
-        var todo = todosService.CreateTodoItem(user, requestTodo);
+        var todo = todosService.CreateTodoItem(userId, requestTodo);
         return Results.Ok(todo);
     }
 
@@ -70,6 +61,7 @@ public static class Todos
     {
         ValidateTodo(new TodoRequestValidator(), requestTodo);
         var todo = todosService.GetTodo(todoId);
+        VerifyTodo(todo, context);
         todo = todosService.UpdateTodoItem(todo!, requestTodo);
         return Results.Ok(todo);
     }
@@ -119,7 +111,7 @@ public static class Todos
         
         var userId = GetUserId(context);
         
-        if (todo.Owner.Id != userId)
+        if (todo.UserId != userId)
             throw new ForbiddenException(
                 DefaultErrorMessages.ForbiddenError,
                 DefaultErrorMessages.ForbiddenTodoMessage);

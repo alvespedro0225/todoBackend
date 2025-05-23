@@ -10,5 +10,5 @@ public sealed record TodoItem
     public DateTime UpdatedAt { get; set; }
     public Status Status { get; set; } = Status.Todo;
     public Guid Id { get; init; } = Guid.NewGuid();
-    public User Owner { get; init; } = null!;
+    public Guid UserId { get; init; }
 };

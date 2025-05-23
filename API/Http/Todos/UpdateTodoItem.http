@@ -1,12 +1,12 @@
-@id = 60a41954-72f9-4095-a532-f02a05fa6780
+@id = 189e621d-42c5-4f2f-96af-2755eed88841
 
-POST {{HostAddress}}/{{TodosAddress}}/{{id}}
+PUT {{HostAddress}}/{{TodosAddress}}/{{id}}
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDc5NjEzNTMsImVtYWlsIjoicGVkcm9AZGZwIiwianRpIjoiYmVmZjRjMDAtODg5Yi00NWYwLTkzODItYWExNTJkNDZlMTBjIiwic3ViIjoiN2RjMDg5NmEtNGUyNy00MjM5LWE3NTItMjE4ZWY5YzYwYjQwIiwibmFtZSI6IlBlZHJvIiwiaWF0IjoxNzQ3OTYwNzUzLCJuYmYiOjE3NDc5NjA3NTN9.obPlB4dQTijKQFnu_BBw0mA4T-ZhBPp2Xma3J78oy7k
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJleHAiOjE3NDgwMTA5NjksImVtYWlsIjoicGVkcm9kQGRmcCIsImp0aSI6ImY2Y2M4NzdjLTBlM2MtNDQyZC05ODYzLTcwODY5ZmM5MjZiYiIsInN1YiI6IjZiMjgzNzA4LTFjNzEtNDgwNS05YmY5LTA5NjI2MGQzNzg0MSIsIm5hbWUiOiJQZWRybyIsImlhdCI6MTc0ODAxMDM2OSwibmJmIjoxNzQ4MDEwMzY5fQ.RnT8z5ao8Tjm9Xqh4Vy8YUiHgHMRtkn_liLYQiiVhYQ
 
 {
-  "name": "Todo",
+  "name": "dd",
   "description": "Description",
   "status": 1
 }
