@@ -1,6 +1,6 @@
 using Domain.Enums;
 
-namespace API.Models.Response;
+namespace Api.Models.Response;
 
 public sealed record TodoDto
 {

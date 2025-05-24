@@ -1,12 +1,13 @@
-using API.Models.Request.Auth;
-using API.Validators.Auth;
+using Api.Models.Request.Auth;
+using Api.Validators.Auth;
+
 using Application.Common.Auth;
 using Application.Common.Auth.Models.Requests;
 using Application.Services.Auth.Commands;
 using Application.Services.Auth.Queries;
 using FluentValidation;
 
-namespace API.Endpoints;
+namespace Api.Endpoints;
 
 public static class Auth
 {
