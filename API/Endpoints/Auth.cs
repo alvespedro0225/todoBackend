@@ -19,13 +19,13 @@ public static class Auth
         group.MapPost("refresh", Refresh);
     }
 
-    public static IResult Register(
+    public static async Task<IResult> Register(
         RegisterRequest registerRequest,
         IAuthCommandService authCommandService)
     {
-        ValidateAuth(new RegisterRequestValidator(), registerRequest);
+         ValidateAuth(new RegisterRequestValidator(), registerRequest);
 
-        var registration = authCommandService.Register(new RegisterCommandRequest
+        var registration = await authCommandService.Register(new RegisterCommandRequest
         {
             Name = registerRequest.Name,
             Email = registerRequest.Email,
@@ -35,13 +35,13 @@ public static class Auth
         return Results.Ok(registration);
     }
 
-    public static IResult Login(
+    public static async Task<IResult> Login(
         LoginRequest loginRequest,
         IAuthQueryService authQueryService)
     {
         ValidateAuth(new LoginRequestValidator(), loginRequest);
 
-        var token = authQueryService.Login(new LoginCommandRequest
+        var token = await authQueryService.Login(new LoginCommandRequest
         {
             Email = loginRequest.Email,
             Password = loginRequest.Password
@@ -50,7 +50,7 @@ public static class Auth
         return Results.Ok(token);
     }
 
-    public static IResult Refresh(
+    public static async Task<IResult> Refresh(
         RefreshRequest refreshRequest,
         IAuthQueryService authQueryService)
     {
@@ -58,7 +58,7 @@ public static class Auth
             new RefreshRequestValidator(),
             refreshRequest);
 
-        var token = authQueryService.RefreshAccessToken(new RefreshCommandRequest
+        var token = await authQueryService.RefreshAccessToken(new RefreshCommandRequest
         {
             UserId = refreshRequest.Id,
             RefreshToken = refreshRequest.RefreshToken

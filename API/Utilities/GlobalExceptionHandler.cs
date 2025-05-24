@@ -45,8 +45,6 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
                 problemDetails.Detail = GetValidationMessages(validationException.Errors);
                 problemDetails.Title = "There was an issue validating the item";
                 break;
-            
-            default: return false;
         }
 
         return await problemDetailsService.TryWriteAsync(

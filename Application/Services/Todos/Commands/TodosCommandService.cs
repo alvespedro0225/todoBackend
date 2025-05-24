@@ -19,6 +19,7 @@ public sealed class TodosCommandService(
         todo.Name = updateTodoCommandRequest.Name;
         todo.Description = updateTodoCommandRequest.Description;
         todo.Status = updateTodoCommandRequest.Status;
+        todo.UpdatedAt = dateTime.UtcNow;
         
         await todosRepository.UpdateTodoItem(todo);
         return todo;

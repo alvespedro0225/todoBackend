@@ -6,6 +6,8 @@ using Application.Services.Common;
 
 using Domain.Entities;
 using Domain.Exceptions;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Queries;
@@ -21,9 +23,14 @@ public sealed class AuthQueryService(
     public async Task<AuthResponse> Login(LoginCommandRequest loginCommandRequest)
     {
         var user = await userRepository.GetUser(loginCommandRequest.Email);
+        var passwordHasher = new PasswordHasher<User>();
+        var passwordVerificationResult = passwordHasher
+            .VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                loginCommandRequest.Password);
         
-        if (user is null ||
-            loginCommandRequest.Password != user.PasswordHash)
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
             throw new UnauthorizedException("Error during login", "Password and email don't match");
         
         user.RefreshToken = tokenGenerator.GenerateRefreshToken();

@@ -14,5 +14,6 @@ public sealed class TodoItem : Entity
     public required DateTime CreatedAt { get; init; }
     public required DateTime UpdatedAt { get; set; }
     public required Status Status { get; set; }
+    public Guid OwnerId { get; set; }
     public required User Owner { get; init; }
 };

@@ -5,6 +5,8 @@ using Application.Common.Repositories;
 using Application.Services.Common;
 using Domain.Entities;
 using Domain.Exceptions;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Commands;
@@ -22,6 +24,8 @@ public sealed class AuthCommandService(
     {
         if (await userRepository.UserExists(registerCommandRequest.Email))
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
+
+        var passwordHasher = new PasswordHasher<User>();
         
         var user = new User
         {
@@ -33,6 +37,7 @@ public sealed class AuthCommandService(
             RefreshTokenExpiration = dateTime.UtcNow.AddMinutes(_refreshExpirationTime)
         };
         
+        user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
         await userRepository.AddUser(user);
         
         var response = new AuthResponse

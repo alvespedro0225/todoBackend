@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{JWT}}
 
 {
-  "name": "dd",
-  "description": "Description",
-  "status": 1
+  "name": "dddd",
+  "description": "Descriptioncd",
+  "status": 2
 }

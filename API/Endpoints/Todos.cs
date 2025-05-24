@@ -48,7 +48,7 @@ public static class Todos
         Guid todoId)
     {
         var todo = await todosQueryService.GetTodoItem(todoId);
-        ValidateOwnership(todo.Owner.Id, context);
+        ValidateOwnership(todo.OwnerId, context);
         var todoDto = ConvertToDto(todo);
         return Results.Ok(todoDto);
     }
@@ -90,7 +90,7 @@ public static class Todos
             Status = todoRequest.Status
         });
         
-        ValidateOwnership(todo.Owner.Id, context);
+        ValidateOwnership(todo.OwnerId, context);
         var todoDto = ConvertToDto(todo);
         return Results.Ok(todoDto);
     }
