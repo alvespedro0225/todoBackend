@@ -36,7 +36,7 @@ public sealed class TodosCommandService(
             CreatedAt = now,
             UpdatedAt = now,
             Status = createTodoCommandRequest.Status,
-            Owner = createTodoCommandRequest.OwnerId
+            Owner = createTodoCommandRequest.Owner 
         };
         await todosRepository.AddTodoItem(todo);
         return todo;

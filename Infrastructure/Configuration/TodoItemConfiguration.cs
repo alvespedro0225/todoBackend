@@ -16,6 +16,7 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 
         builder
             .HasOne(e => e.Owner)
-            .WithMany(e => e.Todos);
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

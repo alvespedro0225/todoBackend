@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using API.Models.Request.Todos;
+using API.Models.Response;
 using API.Utilities;
 using API.Validators.Todos;
 using Application.Common.Todos.Models.Requests;
+using Application.Services.Auth.Queries;
 using Application.Services.Todos.Commands;
 using Application.Services.Todos.Queries;
+
 using Domain.Entities;
 using Domain.Exceptions;
 using FluentValidation;
@@ -30,8 +33,8 @@ public static class Todos
     {
         var userId = GetUserId(context);
         var todos = await todosQueryService.GetTodos(userId);
-
-        return Results.Ok(todos);
+        var todosDto = todos.Select(ConvertToDto).ToList();
+        return Results.Ok(todosDto);
     }
 
     public static async Task<IResult> GetTodoItem(
@@ -40,27 +43,31 @@ public static class Todos
         Guid todoId)
     {
         var todo = await todosQueryService.GetTodoItem(todoId);
-        ValidateOwnership(todo.Owner, context);
-        return Results.Ok(todo);
+        ValidateOwnership(todo.Owner.Id, context);
+        var todoDto = ConvertToDto(todo);
+        return Results.Ok(todoDto);
     }
 
-    public static IResult CreateTodoItem(
+    public async static Task<IResult> CreateTodoItem(
         ITodosCommandService todosCommandService,
+        IAuthQueryService authQueryService,
         TodoRequest todoRequest,
         HttpContext context)
     {
         ValidateTodo(new TodoRequestValidator(), todoRequest);
         var userId = GetUserId(context);
+        var user = await authQueryService.GetUser(userId);
         
-        var todo = todosCommandService.CreateTodoItem(new CreateTodoCommandRequest
+        var todo = await todosCommandService.CreateTodoItem(new CreateTodoCommandRequest
         {
-            OwnerId = userId,
+            Owner = user,
             Name = todoRequest.Name,
             Description = todoRequest.Description,
             Status = todoRequest.Status
         });
         
-        return Results.Created($"todos/{todo.Id}", todo);
+        var todoDto = ConvertToDto(todo);
+        return Results.Created($"todos/{todo.Id}", todoDto);
     }
 
     public static async Task<IResult> UpdateTodoItem(
@@ -78,9 +85,9 @@ public static class Todos
             Status = todoRequest.Status
         });
         
-        ValidateOwnership(todo.Owner, context);
-        
-        return Results.Ok(todo);
+        ValidateOwnership(todo.Owner.Id, context);
+        var todoDto = ConvertToDto(todo);
+        return Results.Ok(todoDto);
     }
 
     public static async Task<IResult> DeleteTodoItem(
@@ -127,5 +134,19 @@ public static class Todos
             throw new ForbiddenException(
                 DefaultErrorMessages.ForbiddenError,
                 DefaultErrorMessages.ForbiddenTodoMessage);
+    }
+
+    private static TodoDto ConvertToDto(TodoItem todo)
+    {
+        var todoDto = new TodoDto
+        {
+            Name = todo.Name,
+            Description = todo.Description,
+            CreatedAt = todo.CreatedAt,
+            UpdatedAt = todo.UpdatedAt,
+            Status = todo.Status,
+            Id = todo.Id
+        };
+        return todoDto;
     }
 }

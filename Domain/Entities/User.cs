@@ -13,5 +13,4 @@ public sealed class User : Entity
     [MaxLength(100)]
     public required string RefreshToken { get; set; }
     public required DateTime RefreshTokenExpiration { get; set; }
-    public List<TodoItem> Todos { get; set; } = [];
 }

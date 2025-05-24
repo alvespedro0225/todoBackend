@@ -12,7 +12,7 @@ public sealed class TodosRepository(AppDbContext dbContext) : ITodoItemRepositor
     
     public async Task<List<TodoItem>> GetTodos(Guid ownerId)
     {
-        return await dbContext.Todos.AsNoTracking().Where(todo => todo.Owner == ownerId).ToListAsync();
+        return await dbContext.Todos.AsNoTracking().Where(todo => todo.Owner.Id == ownerId).ToListAsync();
     }
 
     public async Task<TodoItem> GetTodoItem(Guid todoId)

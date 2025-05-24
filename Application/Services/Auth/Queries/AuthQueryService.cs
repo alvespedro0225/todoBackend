@@ -3,6 +3,8 @@ using Application.Common.Auth.Models.Requests;
 using Application.Common.Auth.Models.Responses;
 using Application.Common.Repositories;
 using Application.Services.Common;
+
+using Domain.Entities;
 using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 
@@ -52,4 +54,6 @@ public sealed class AuthQueryService(
 
         return tokenGenerator.GenerateAccessToken(user);
     }
+
+    public async Task<User> GetUser(Guid userId) => await userRepository.GetUser(userId);
 }
