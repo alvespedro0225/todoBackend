@@ -24,23 +24,23 @@ public static class Todos
         group.MapDelete("{todoId:guid}", DeleteTodoItem);
     }
 
-    public static IResult GetTodos(
+    public async static Task<IResult> GetTodos(
         ITodosQueryService todosQueryService,
         HttpContext context)
     {
         var userId = GetUserId(context);
-        var todos = todosQueryService.GetTodos(userId);
+        var todos = await todosQueryService.GetTodos(userId);
 
         return Results.Ok(todos);
     }
 
-    public static IResult GetTodoItem(
+    public static async Task<IResult> GetTodoItem(
         ITodosQueryService todosQueryService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
+        var todo = await todosQueryService.GetTodoItem(todoId);
+        ValidateOwnership(todo.Owner, context);
         return Results.Ok(todo);
     }
 
@@ -60,39 +60,38 @@ public static class Todos
             Status = todoRequest.Status
         });
         
-        return Results.Ok(todo);
+        return Results.Created($"todos/{todo.Id}", todo);
     }
 
-    public static IResult UpdateTodoItem(
-        ITodosQueryService todosQueryService,
+    public static async Task<IResult> UpdateTodoItem(
         ITodosCommandService todosCommandService,
         HttpContext context,
         TodoRequest todoRequest,
         Guid todoId)
     {
         ValidateTodo(new TodoRequestValidator(), todoRequest);
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
 
-        todo = todosCommandService.UpdateTodoItem(todo!, new UpdateTodoCommandRequest
+        var todo = await todosCommandService.UpdateTodoItem(todoId, new UpdateTodoCommandRequest
         {
             Name = todoRequest.Name,
             Description = todoRequest.Description,
             Status = todoRequest.Status
         });
         
+        ValidateOwnership(todo.Owner, context);
+        
         return Results.Ok(todo);
     }
 
-    public static IResult DeleteTodoItem(
+    public static async Task<IResult> DeleteTodoItem(
         ITodosQueryService todosQueryService,
         ITodosCommandService todosCommandService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
-        todosCommandService.DeleteTodoItem(todo!);
+        var todo = await todosQueryService.GetTodoItem(todoId);
+        ValidateOwnership(todo.Id, context);
+        await todosCommandService.DeleteTodoItem(todoId);
         return Results.NoContent();
     }
 
@@ -121,16 +120,10 @@ public static class Todos
         validator.ValidateAndThrow(todo);
     }
     
-    private static void VerifyTodo(TodoItem? todo, HttpContext context)
+    private static void ValidateOwnership(Guid todoOwner, HttpContext context)
     {
-        if (todo is null)
-            throw new NotFoundException(
-                DefaultErrorMessages.TodoNotFoundError,
-                DefaultErrorMessages.TodoNotFoundMessage);
-        
         var userId = GetUserId(context);
-        
-        if (todo.UserId != userId)
+        if (todoOwner != userId)
             throw new ForbiddenException(
                 DefaultErrorMessages.ForbiddenError,
                 DefaultErrorMessages.ForbiddenTodoMessage);

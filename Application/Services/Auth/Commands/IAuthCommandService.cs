@@ -5,5 +5,5 @@ namespace Application.Services.Auth.Commands;
 
 public interface IAuthCommandService
 {
-    public AuthResponse Register(RegisterCommandRequest registerCommandRequest);
+    public Task<AuthResponse> Register(RegisterCommandRequest registerCommandRequest);
 }

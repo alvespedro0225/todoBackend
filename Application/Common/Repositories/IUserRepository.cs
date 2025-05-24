@@ -4,7 +4,9 @@ namespace Application.Common.Repositories;
 
 public interface IUserRepository
 {
-    public User? GetUser(Guid id);
-    public User? GetUser(string email);
-    public void AddUser(User user);
+    public Task<User> GetUser(Guid userId);
+    public Task<User> GetUser(string email);
+    public Task AddUser(User user);
+    public Task<bool> UserExists(Guid userId);
+    public Task<bool> UserExists(string userEmail);
 }

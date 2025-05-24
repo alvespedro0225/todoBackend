@@ -1,12 +1,14 @@
+using Application.Common.Todos.Models.Requests;
+
 using Domain.Entities;
 
 namespace Application.Common.Repositories;
 
 public interface ITodoItemRepository
 {
-    public List<TodoItem> GetTodos(Guid ownerId);
-    public TodoItem? GetTodoItem(Guid todoId);
-    public void UpdateTodoItem(TodoItem oldTodo, TodoItem updatedTodo);
-    public void DeleteTodoItem(TodoItem todo);
-    public void AddTodoItem(TodoItem todo);
+    public Task<List<TodoItem>> GetTodos(Guid ownerId);
+    public Task<TodoItem> GetTodoItem(Guid todoId);
+    public Task UpdateTodoItem(TodoItem todo);
+    public Task DeleteTodoItem(Guid todoId);
+    public Task AddTodoItem(TodoItem todo);
 }

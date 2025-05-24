@@ -1,24 +1,50 @@
+using API.Utilities;
 using Application.Common.Repositories;
 using Domain.Entities;
+using Domain.Exceptions;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class UserRepository : IUserRepository
+public sealed class UserRepository(AppDbContext dbContext) : IUserRepository
 {
-    private static readonly List<User> Users = []; 
+    public async Task<User> GetUser(Guid userId)
+    {
+        var user = await dbContext.Users.FindAsync(userId);
+        CheckForNull(user);
+        return user!;
+    }
+
+    public async  Task<User> GetUser(string email)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
+        CheckForNull(user);
+        return user!;
+    }
+
+    public async Task AddUser(User user)
+    {
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<bool> UserExists(Guid userId)
+    {
+        return await dbContext.Users.AnyAsync(user => user.Id == userId);  
+    }
     
-    public User? GetUser(Guid id)
+    public async Task<bool> UserExists(string userEmail)
     {
-        return Users.FirstOrDefault(user => user.Id == id);
+        return await dbContext.Users.AnyAsync(user => user.Email == userEmail);  
     }
 
-    public User? GetUser(string email)
+    private static void CheckForNull(User? user)
     {
-        return Users.FirstOrDefault(user => user.Email == email);
+        if (user is null)
+            throw new NotFoundException(
+                DefaultErrorMessages.UserNotFoundError,
+                DefaultErrorMessages.UserNotFoundMessage);
     }
-
-    public void AddUser(User user)
-    {
-        Users.Add(user);
-    }
+        
 }

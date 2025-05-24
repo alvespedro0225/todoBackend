@@ -2,8 +2,10 @@ using System.Text;
 using Application.Common.Auth;
 using Application.Common.Repositories;
 using Infrastructure.Auth;
+using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +19,10 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITodoItemRepository, TodosRepository>();
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseSqlite($"Data Source={configuration.GetConnectionString("SQLite")}");
+        });
         services.AddAuth(configuration);
         return services;
     }
@@ -41,7 +47,11 @@ public static class DependencyInjection
                 {
                     ValidAudience = audience,
                     ValidIssuer = issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true
                 };
             });
 

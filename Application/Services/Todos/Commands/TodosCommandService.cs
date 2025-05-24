@@ -10,36 +10,40 @@ public sealed class TodosCommandService(
     ITodoItemRepository todosRepository,
     IDateTimeProvider dateTime) : ITodosCommandService
 {
-    public TodoItem UpdateTodoItem(
-        TodoItem oldTodo,
+    public async Task<TodoItem> UpdateTodoItem(
+        Guid todoId,
         UpdateTodoCommandRequest updateTodoCommandRequest)
     {
-        oldTodo.Name = updateTodoCommandRequest.Name;
-        oldTodo.Status = updateTodoCommandRequest.Status;
-        oldTodo.Description = updateTodoCommandRequest.Description;
-        oldTodo.UpdatedAt = dateTime.Offset;
-        return oldTodo;
+        var todo = await todosRepository.GetTodoItem(todoId);
+
+        todo.Name = updateTodoCommandRequest.Name;
+        todo.Description = updateTodoCommandRequest.Description;
+        todo.Status = updateTodoCommandRequest.Status;
+        
+        await todosRepository.UpdateTodoItem(todo);
+        return todo;
     }
 
-    public TodoItem CreateTodoItem(CreateTodoCommandRequest createTodoCommandRequest)
+    public async Task<TodoItem> CreateTodoItem(CreateTodoCommandRequest createTodoCommandRequest)
     {
         var now = dateTime.Offset;
         
         var todo = new TodoItem
         {
+            Id = Guid.NewGuid(),
             Name = createTodoCommandRequest.Name,
             Description = createTodoCommandRequest.Description,
             CreatedAt = now,
             UpdatedAt = now,
             Status = createTodoCommandRequest.Status,
-            UserId = createTodoCommandRequest.OwnerId
+            Owner = createTodoCommandRequest.OwnerId
         };
-        todosRepository.AddTodoItem(todo);
+        await todosRepository.AddTodoItem(todo);
         return todo;
     }
 
-    public void DeleteTodoItem(TodoItem todo)
+    public async Task DeleteTodoItem(Guid todoId)
     {
-        todosRepository.DeleteTodoItem(todo);
+        await todosRepository.DeleteTodoItem(todoId);
     }
 }

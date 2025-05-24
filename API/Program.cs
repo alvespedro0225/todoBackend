@@ -2,8 +2,8 @@ using API;
 using Application;
 using Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 

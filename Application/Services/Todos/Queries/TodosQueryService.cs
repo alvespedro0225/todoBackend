@@ -6,14 +6,14 @@ namespace Application.Services.Todos.Queries;
 
 public sealed class TodosQueryService(ITodoItemRepository todosRepository) : ITodosQueryService
 {
-    public List<TodoItem> GetTodos(Guid owner)
+    public async Task<List<TodoItem>> GetTodos(Guid owner)
     {
-        return todosRepository.GetTodos(owner);
+        return await todosRepository.GetTodos(owner);
     }
 
-    public TodoItem? GetTodo(Guid todoId)
+    public async Task<TodoItem> GetTodoItem(Guid todoId)
     {
-        var todo = todosRepository.GetTodoItem(todoId);
+        var todo = await todosRepository.GetTodoItem(todoId);
         return todo;
     }
 }

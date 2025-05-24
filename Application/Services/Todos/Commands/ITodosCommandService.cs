@@ -6,7 +6,7 @@ namespace Application.Services.Todos.Commands;
 
 public interface ITodosCommandService
 {
-    public TodoItem CreateTodoItem(CreateTodoCommandRequest createTodoCommandRequest);
-    public TodoItem UpdateTodoItem(TodoItem todo, UpdateTodoCommandRequest updateTodoCommandRequest);
-    public void DeleteTodoItem(TodoItem todo);
+    public Task<TodoItem> CreateTodoItem(CreateTodoCommandRequest createTodoCommandRequest);
+    public Task<TodoItem> UpdateTodoItem(Guid todoId, UpdateTodoCommandRequest updateTodoCommandRequest);
+    public Task DeleteTodoItem(Guid todo);
 }
