@@ -9,6 +9,7 @@ public static class DependencyInjection
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
         services.AddExceptionHandling();
+        services.ConfigureCors();
         return services;
     }
 
@@ -30,6 +31,22 @@ public static class DependencyInjection
         });
         
         services.AddExceptionHandler<GlobalExceptionHandler>();
+        return services;
+    }
+
+    private static IServiceCollection ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
         return services;
     }
 }

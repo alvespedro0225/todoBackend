@@ -24,4 +24,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapApiEndpoints();
+app.UseCors();
 app.Run();
