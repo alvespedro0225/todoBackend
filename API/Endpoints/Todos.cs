@@ -2,9 +2,6 @@ using System.Security.Claims;
 
 using Api.Models.Request.Todos;
 using Api.Models.Response;
-
-using API.Utilities;
-
 using Api.Validators.Todos;
 
 using Application.Common.Todos.Models.Requests;
@@ -12,6 +9,7 @@ using Application.Services.Auth.Queries;
 using Application.Services.Todos.Commands;
 using Application.Services.Todos.Queries;
 
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
 
@@ -39,7 +37,7 @@ public static class Todos
         var userId = GetUserId(context);
         var todos = await todosQueryService.GetTodos(userId);
         var todosDto = todos.Select(ConvertToDto).ToList();
-        return Results.Ok(todosDto);
+        return TypedResults.Ok(todosDto);
     }
 
     public static async Task<IResult> GetTodoItem(
@@ -50,7 +48,7 @@ public static class Todos
         var todo = await todosQueryService.GetTodoItem(todoId);
         ValidateOwnership(todo.OwnerId, context);
         var todoDto = ConvertToDto(todo);
-        return Results.Ok(todoDto);
+        return TypedResults.Ok(todoDto);
     }
 
     public async static Task<IResult> CreateTodoItem(
@@ -72,7 +70,7 @@ public static class Todos
         });
         
         var todoDto = ConvertToDto(todo);
-        return Results.Created($"todos/{todo.Id}", todoDto);
+        return TypedResults.Created($"todos/{todo.Id}", todoDto);
     }
 
     public static async Task<IResult> UpdateTodoItem(
@@ -92,7 +90,7 @@ public static class Todos
         
         ValidateOwnership(todo.OwnerId, context);
         var todoDto = ConvertToDto(todo);
-        return Results.Ok(todoDto);
+        return TypedResults.Ok(todoDto);
     }
 
     public static async Task<IResult> DeleteTodoItem(
@@ -104,7 +102,7 @@ public static class Todos
         var todo = await todosQueryService.GetTodoItem(todoId);
         ValidateOwnership(todo.Id, context);
         await todosCommandService.DeleteTodoItem(todoId);
-        return Results.NoContent();
+        return TypedResults.NoContent();
     }
 
     private static Guid GetUserId(HttpContext context)
@@ -114,15 +112,15 @@ public static class Todos
 
         if (userIdClaim is null)
             throw new UnauthorizedException(
-                "Missing Name Identifier Claim",
-                "Make sure this is a registered user");
+                DefaultErrorMessages.UnauthorizedMissingClaimError,
+                DefaultErrorMessages.UnauthorizedMissingClaimMessage);
 
         var stringUserId = userIdClaim.Value;
 
         if (!Guid.TryParse(stringUserId, out var userId))
             throw new UnauthorizedException(
-                "Invalid Name Identifier Claim",
-                "Make sure user has a valid Guid registered");
+                DefaultErrorMessages.UnauthorizedInvalidClaimError,
+                DefaultErrorMessages.UnauthorizedInvalidClaimMessage);
 
         return userId;
     }

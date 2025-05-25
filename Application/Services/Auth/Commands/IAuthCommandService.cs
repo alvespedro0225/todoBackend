@@ -5,5 +5,6 @@ namespace Application.Services.Auth.Commands;
 
 public interface IAuthCommandService
 {
-    public Task<AuthResponse> Register(RegisterCommandRequest registerCommandRequest);
+    public Task<AuthResponse> RegisterUser(RegisterCommandRequest registerCommandRequest);
+    public Task DeleteUser(Guid userId);
 }

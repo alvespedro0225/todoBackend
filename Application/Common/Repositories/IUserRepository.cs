@@ -9,4 +9,5 @@ public interface IUserRepository
     public Task AddUser(User user);
     public Task<bool> UserExists(Guid userId);
     public Task<bool> UserExists(string userEmail);
+    public Task DeleteUser(Guid userId);
 }

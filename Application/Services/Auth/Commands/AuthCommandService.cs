@@ -20,7 +20,7 @@ public sealed class AuthCommandService(
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
     
-    public async Task<AuthResponse> Register(RegisterCommandRequest registerCommandRequest)
+    public async Task<AuthResponse> RegisterUser(RegisterCommandRequest registerCommandRequest)
     {
         if (await userRepository.UserExists(registerCommandRequest.Email))
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
@@ -47,5 +47,10 @@ public sealed class AuthCommandService(
             UserId = user.Id
         };
         return response;
+    }
+
+    public async Task DeleteUser(Guid userId)
+    {
+        await userRepository.DeleteUser(userId);
     }
 }

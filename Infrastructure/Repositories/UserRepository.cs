@@ -1,5 +1,6 @@
-using API.Utilities;
 using Application.Common.Repositories;
+
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
 using Infrastructure.Data;
@@ -37,6 +38,12 @@ public sealed class UserRepository(AppDbContext dbContext) : IUserRepository
     public async Task<bool> UserExists(string userEmail)
     {
         return await dbContext.Users.AnyAsync(user => user.Email == userEmail);  
+    }
+
+    public async Task DeleteUser(Guid userId)
+    {
+        await dbContext.Users.Where(user => user.Id == userId).ExecuteDeleteAsync();
+        await dbContext.SaveChangesAsync();
     }
 
     private static void CheckForNull(User? user)
