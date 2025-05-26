@@ -18,7 +18,7 @@ internal class TodoRequestValidator : AbstractValidator<TodoRequest>
             .MaximumLength(200);
 
         RuleFor(todoRequest => todoRequest.Status)
-            .NotEmpty()
+            .NotNull()
             .IsInEnum();
     }
 }
