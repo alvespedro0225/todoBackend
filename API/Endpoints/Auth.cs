@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using Api.Models.Request.Auth;
+using Api.Models.Response.Auth;
 using Api.Validators.Auth;
 
 using Application.Common.Auth;
@@ -67,13 +68,16 @@ public static class Auth
             new RefreshRequestValidator(),
             refreshRequest);
 
-        var token = await authQueryService.RefreshAccessToken(new RefreshCommandRequest
+        var accessToken = await authQueryService.RefreshAccessToken(new RefreshCommandRequest
         {
             UserId = refreshRequest.Id,
             RefreshToken = refreshRequest.RefreshToken
         });
         
-        return TypedResults.Ok(token);
+        return TypedResults.Ok(new RefreshResponse
+        {
+            AccessToken = accessToken
+        });
     }
     
     public static async Task<IResult> DeleteUser(
