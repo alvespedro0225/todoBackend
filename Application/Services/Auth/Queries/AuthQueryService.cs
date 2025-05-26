@@ -8,18 +8,14 @@ using Domain.Entities;
 using Domain.Exceptions;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Queries;
 
 public sealed class AuthQueryService(
     IUserRepository userRepository,
     IJwtTokenGenerator tokenGenerator,
-    IConfiguration configuration,
     IDateTimeProvider dateTime) : IAuthQueryService
 {
-    private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
-    
     public async Task<string> RefreshAccessToken(RefreshCommandRequest refreshCommandRequest)
     {
         var user = await userRepository.GetUser(refreshCommandRequest.UserId);
