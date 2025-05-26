@@ -46,11 +46,11 @@ public static class Auth
 
     public static async Task<IResult> LoginUser(
         LoginRequest loginRequest,
-        IAuthQueryService authQueryService)
+        IAuthCommandService authCommandService)
     {
         ValidateAuth(new LoginRequestValidator(), loginRequest);
 
-        var token = await authQueryService.Login(new LoginCommandRequest
+        var token = await authCommandService.Login(new LoginCommandRequest
         {
             Email = loginRequest.Email,
             Password = loginRequest.Password

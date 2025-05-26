@@ -14,7 +14,8 @@ public sealed class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenG
 {
     public string GenerateAccessToken(User user)
     {
-        var secretKey = configuration["Jwt:Secret"]!;
+        var secretKey = Environment.GetEnvironmentVariable("AccessSecret") 
+                        ?? throw new NullReferenceException("Access Secret cannot be null"); 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         

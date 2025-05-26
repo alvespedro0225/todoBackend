@@ -7,7 +7,9 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AccessSecret": "QeCT5vusFpj5BucZD$0ryeagpws5X%!Am42Vr8Y!",
+        "Sqlite": "C:/Users/erika/Desktop/Pedro/todoBackend/todos.db"
       }
     },
     "https": {

@@ -48,6 +48,32 @@ public sealed class AuthCommandService(
         };
         return response;
     }
+    
+    public async Task<AuthResponse> Login(LoginCommandRequest loginCommandRequest)
+    {
+        var user = await userRepository.GetUser(loginCommandRequest.Email);
+        var passwordHasher = new PasswordHasher<User>();
+        var passwordVerificationResult = passwordHasher
+            .VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                loginCommandRequest.Password);
+        
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            throw new UnauthorizedException("Error during login", "Password and email don't match");
+        
+        user.RefreshToken = tokenGenerator.GenerateRefreshToken();
+        user.RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(_refreshExpirationTime);
+        await userRepository.UpdateRefreshToken(user.RefreshToken, user.Id);
+        var response = new AuthResponse
+        {
+            AccessToken = tokenGenerator.GenerateAccessToken(user),
+            RefreshToken = user.RefreshToken,
+            UserId = user.Id
+        };
+        
+        return response;
+    }
 
     public async Task DeleteUser(Guid userId)
     {

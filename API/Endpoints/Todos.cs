@@ -29,7 +29,7 @@ public static class Todos
         group.MapPut("{todoId:guid}", UpdateTodoItem);
         group.MapDelete("{todoId:guid}", DeleteTodoItem);
     }
-
+    
     public async static Task<IResult> GetTodos(
         ITodosQueryService todosQueryService,
         HttpContext context)

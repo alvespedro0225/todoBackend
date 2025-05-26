@@ -42,10 +42,29 @@ public sealed class UserRepository(AppDbContext dbContext) : IUserRepository
 
     public async Task DeleteUser(Guid userId)
     {
-        await dbContext.Users.Where(user => user.Id == userId).ExecuteDeleteAsync();
+        var deleted = await dbContext.Users.Where(user => user.Id == userId).ExecuteDeleteAsync();
+        
+        if (deleted == 0)
+            throw new NotFoundException(
+                DefaultErrorMessages.UserNotFoundError,
+                DefaultErrorMessages.UserNotFoundMessage);
+        
         await dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateRefreshToken(string refreshToken, Guid userId)
+    {
+        var updated = await dbContext.Users.Where(user => user.Id == userId).ExecuteUpdateAsync(calls
+            => calls.SetProperty(user => user.RefreshToken, refreshToken));
+        
+        if (updated == 0)
+            throw new NotFoundException(
+                DefaultErrorMessages.UserNotFoundError,
+                DefaultErrorMessages.UserNotFoundMessage);
+
+        await dbContext.SaveChangesAsync();
+    }
+    
     private static void CheckForNull(User? user)
     {
         if (user is null)

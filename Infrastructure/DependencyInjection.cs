@@ -21,7 +21,7 @@ public static class DependencyInjection
         services.AddScoped<ITodoItemRepository, TodosRepository>();
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlite($"Data Source={configuration.GetConnectionString("SQLite")}");
+            options.UseSqlite($"Data Source={Environment.GetEnvironmentVariable("Sqlite")}");
         });
         services.AddAuth(configuration);
         return services;
@@ -35,7 +35,7 @@ public static class DependencyInjection
         var issuer = configuration["Jwt:Issuer"] 
                      ?? throw new NullReferenceException("Missing issuer");
         
-        var securityKey = configuration["Jwt:Secret"] 
+        var securityKey = Environment.GetEnvironmentVariable("AccessSecret") 
                           ?? throw new NullReferenceException("Missing secret key");
         
         services

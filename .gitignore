@@ -518,3 +518,4 @@ $RECYCLE.BIN/
 *.db-shm
 *.db-wal
 Api/Http/*
+/build
