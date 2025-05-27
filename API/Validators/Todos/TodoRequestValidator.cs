@@ -1,7 +1,8 @@
-using API.Models.Request.Todos;
+using Api.Models.Request.Todos;
+
 using FluentValidation;
 
-namespace API.Validators.Todos;
+namespace Api.Validators.Todos;
 
 internal class TodoRequestValidator : AbstractValidator<TodoRequest>
 {
@@ -10,14 +11,14 @@ internal class TodoRequestValidator : AbstractValidator<TodoRequest>
         RuleFor(todoRequest => todoRequest.Name)
             .NotEmpty()
             .MinimumLength(2)
-            .MaximumLength(30);
+            .MaximumLength(40);
 
         RuleFor(todoRequest => todoRequest.Description)
             .NotNull()
             .MaximumLength(200);
 
         RuleFor(todoRequest => todoRequest.Status)
-            .NotEmpty()
+            .NotNull()
             .IsInEnum();
     }
 }

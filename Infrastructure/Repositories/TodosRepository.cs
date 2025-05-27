@@ -1,35 +1,53 @@
 using Application.Common.Repositories;
+
+using Domain.Constants;
 using Domain.Entities;
+using Domain.Exceptions;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class TodosRepository : ITodoItemRepository
+public sealed class TodosRepository(AppDbContext dbContext) : ITodoItemRepository
 {
-    private static readonly List<TodoItem> Todos = [];
     
-    public List<TodoItem> GetTodos(Guid ownerId)
+    public async Task<List<TodoItem>> GetTodos(Guid ownerId)
     {
-        return Todos.Where(todo => todo.UserId == ownerId).ToList();
+        return await dbContext.Todos.AsNoTracking().Where(todo => todo.Owner.Id == ownerId).ToListAsync();
     }
 
-    public TodoItem? GetTodoItem(Guid todoId)
+    public async Task<TodoItem> GetTodoItem(Guid todoId)
     {
-        return Todos.FirstOrDefault(todo => todo.Id == todoId);
+        var todo = await dbContext.Todos.FindAsync(todoId);
+
+        if (todo is null)
+            throw new NotFoundException(
+                DefaultErrorMessages.TodoNotFoundError,
+                DefaultErrorMessages.TodoNotFoundMessage);
+
+        return todo;
     }
 
-    public void UpdateTodoItem(TodoItem oldTodo, TodoItem updatedTodo)
+    public async Task UpdateTodoItem(TodoItem todo)
     {
-        var index = Todos.IndexOf(oldTodo);
-        Todos[index] = updatedTodo;
+        dbContext.Todos.Update(todo);
+        await dbContext.SaveChangesAsync();
     }
 
-    public void DeleteTodoItem(TodoItem todo)
+    public async Task DeleteTodoItem(Guid todoId)
     {
-        Todos.Remove(todo);
+        if (!await dbContext.Todos.AnyAsync(todo => todo.Id == todoId))
+            throw new NotFoundException(
+                DefaultErrorMessages.TodoNotFoundError,
+                DefaultErrorMessages.TodoNotFoundMessage);
+        
+        await dbContext.Todos.Where(todo => todo.Id == todoId).ExecuteDeleteAsync();
+        await dbContext.SaveChangesAsync();
     }
 
-    public void AddTodoItem(TodoItem todo)
+    public async Task AddTodoItem(TodoItem todo)
     {
-        Todos.Add(todo);
+        dbContext.Add(todo);
+        await dbContext.SaveChangesAsync();
     }
 }

@@ -1,14 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 using Domain.Enums;
 
 namespace Domain.Entities;
 
-public sealed record TodoItem
+public sealed class TodoItem : Entity
 {
-    public string Name { get; set; } = null!;
-    public string Description { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; init; } = DateTime.Now;
-    public DateTime UpdatedAt { get; set; }
-    public Status Status { get; set; } = Status.Todo;
-    public Guid Id { get; init; } = Guid.NewGuid();
-    public Guid UserId { get; init; }
+    [MaxLength(40)]
+    public required string Name { get; set; }
+    [MaxLength(40)]
+    public required string Description { get; set; }
+    public required DateTime CreatedAt { get; init; }
+    public required DateTime UpdatedAt { get; set; }
+    public required Status Status { get; set; }
+    public Guid OwnerId { get; set; }
+    public required User Owner { get; init; }
 };

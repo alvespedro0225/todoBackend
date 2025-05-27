@@ -1,11 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
-public sealed record User
+public sealed class User : Entity
 {
-    public string Name { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string Password { get; set; } = null!;
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public string RefreshToken { get; set; } = null!;
-    public DateTime RefreshTokenExpiration { get; set; }
+    [MaxLength(40)]
+    public required string Name { get; set; }
+    [MaxLength(40)]
+    public required string Email { get; set; }
+    [MaxLength(40)]
+    public required string PasswordHash { get; set; }
+    [MaxLength(100)]
+    public required string RefreshToken { get; set; }
+    public required DateTime RefreshTokenExpiration { get; set; }
 }

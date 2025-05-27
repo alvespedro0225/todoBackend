@@ -3,43 +3,22 @@ using Application.Common.Auth.Models.Requests;
 using Application.Common.Auth.Models.Responses;
 using Application.Common.Repositories;
 using Application.Services.Common;
+
+using Domain.Entities;
 using Domain.Exceptions;
-using Microsoft.Extensions.Configuration;
+
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services.Auth.Queries;
 
 public sealed class AuthQueryService(
     IUserRepository userRepository,
     IJwtTokenGenerator tokenGenerator,
-    IConfiguration configuration,
     IDateTimeProvider dateTime) : IAuthQueryService
 {
-    private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
-    
-    public AuthResponse Login(LoginCommandRequest loginCommandRequest)
+    public async Task<string> RefreshAccessToken(RefreshCommandRequest refreshCommandRequest)
     {
-        var user = userRepository.GetUser(loginCommandRequest.Email);
-        
-        if (user is null ||
-            loginCommandRequest.Password != user.Password)
-            throw new UnauthorizedException("Error during login", "Password and email don't match");
-        
-        user.RefreshToken = tokenGenerator.GenerateRefreshToken();
-        user.RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(_refreshExpirationTime);
-        
-        var response = new AuthResponse
-        {
-            AccessToken = tokenGenerator.GenerateAccessToken(user),
-            RefreshToken = user.RefreshToken,
-            UserId = user.Id
-        };
-        
-        return response;
-    }
-    
-    public string RefreshAccessToken(RefreshCommandRequest refreshCommandRequest)
-    {
-        var user = userRepository.GetUser(refreshCommandRequest.UserId);
+        var user = await userRepository.GetUser(refreshCommandRequest.UserId);
 
         if (user is null)
             throw new NotFoundException("User not found", "Make sure this user is registered");
@@ -52,4 +31,6 @@ public sealed class AuthQueryService(
 
         return tokenGenerator.GenerateAccessToken(user);
     }
+
+    public async Task<User> GetUser(Guid userId) => await userRepository.GetUser(userId);
 }

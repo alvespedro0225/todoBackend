@@ -1,15 +1,22 @@
 using System.Security.Claims;
-using API.Models.Request.Todos;
-using API.Utilities;
-using API.Validators.Todos;
+
+using Api.Models.Request.Todos;
+using Api.Models.Response;
+using Api.Models.Response.Todos;
+using Api.Validators.Todos;
+
 using Application.Common.Todos.Models.Requests;
+using Application.Services.Auth.Queries;
 using Application.Services.Todos.Commands;
 using Application.Services.Todos.Queries;
+
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
+
 using FluentValidation;
 
-namespace API.Endpoints;
+namespace Api.Endpoints;
 
 public static class Todos
 {
@@ -23,77 +30,80 @@ public static class Todos
         group.MapPut("{todoId:guid}", UpdateTodoItem);
         group.MapDelete("{todoId:guid}", DeleteTodoItem);
     }
-
-    public static IResult GetTodos(
+    
+    public async static Task<IResult> GetTodos(
         ITodosQueryService todosQueryService,
         HttpContext context)
     {
         var userId = GetUserId(context);
-        var todos = todosQueryService.GetTodos(userId);
-
-        return Results.Ok(todos);
+        var todos = await todosQueryService.GetTodos(userId);
+        var todosDto = todos.Select(ConvertToDto).ToList();
+        return TypedResults.Ok(todosDto);
     }
 
-    public static IResult GetTodoItem(
+    public static async Task<IResult> GetTodoItem(
         ITodosQueryService todosQueryService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
-        return Results.Ok(todo);
+        var todo = await todosQueryService.GetTodoItem(todoId);
+        ValidateOwnership(todo.OwnerId, context);
+        var todoDto = ConvertToDto(todo);
+        return TypedResults.Ok(todoDto);
     }
 
-    public static IResult CreateTodoItem(
+    public async static Task<IResult> CreateTodoItem(
         ITodosCommandService todosCommandService,
+        IAuthQueryService authQueryService,
         TodoRequest todoRequest,
         HttpContext context)
     {
         ValidateTodo(new TodoRequestValidator(), todoRequest);
         var userId = GetUserId(context);
+        var user = await authQueryService.GetUser(userId);
         
-        var todo = todosCommandService.CreateTodoItem(new CreateTodoCommandRequest
+        var todo = await todosCommandService.CreateTodoItem(new CreateTodoCommandRequest
         {
-            OwnerId = userId,
+            Owner = user,
             Name = todoRequest.Name,
             Description = todoRequest.Description,
             Status = todoRequest.Status
         });
         
-        return Results.Ok(todo);
+        var todoDto = ConvertToDto(todo);
+        return TypedResults.Created($"todos/{todo.Id}", todoDto);
     }
 
-    public static IResult UpdateTodoItem(
-        ITodosQueryService todosQueryService,
+    public static async Task<IResult> UpdateTodoItem(
         ITodosCommandService todosCommandService,
         HttpContext context,
         TodoRequest todoRequest,
         Guid todoId)
     {
         ValidateTodo(new TodoRequestValidator(), todoRequest);
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
 
-        todo = todosCommandService.UpdateTodoItem(todo!, new UpdateTodoCommandRequest
+        var todo = await todosCommandService.UpdateTodoItem(todoId, new UpdateTodoCommandRequest
         {
             Name = todoRequest.Name,
             Description = todoRequest.Description,
             Status = todoRequest.Status
         });
         
-        return Results.Ok(todo);
+        ValidateOwnership(todo.OwnerId, context);
+        var todoDto = ConvertToDto(todo);
+        return TypedResults.Ok(todoDto);
     }
 
-    public static IResult DeleteTodoItem(
+    public static async Task<IResult> DeleteTodoItem(
         ITodosQueryService todosQueryService,
         ITodosCommandService todosCommandService,
         HttpContext context,
         Guid todoId)
     {
-        var todo = todosQueryService.GetTodo(todoId);
-        VerifyTodo(todo, context);
-        todosCommandService.DeleteTodoItem(todo!);
-        return Results.NoContent();
+        var todo = await todosQueryService.GetTodoItem(todoId);
+        ValidateOwnership(todo.Id, context);
+        await todosCommandService.DeleteTodoItem(todoId);
+        return TypedResults.NoContent();
     }
 
     private static Guid GetUserId(HttpContext context)
@@ -103,15 +113,15 @@ public static class Todos
 
         if (userIdClaim is null)
             throw new UnauthorizedException(
-                "Missing Name Identifier Claim",
-                "Make sure this is a registered user");
+                DefaultErrorMessages.UnauthorizedMissingClaimError,
+                DefaultErrorMessages.UnauthorizedMissingClaimMessage);
 
         var stringUserId = userIdClaim.Value;
 
         if (!Guid.TryParse(stringUserId, out var userId))
             throw new UnauthorizedException(
-                "Invalid Name Identifier Claim",
-                "Make sure user has a valid Guid registered");
+                DefaultErrorMessages.UnauthorizedInvalidClaimError,
+                DefaultErrorMessages.UnauthorizedInvalidClaimMessage);
 
         return userId;
     }
@@ -121,18 +131,26 @@ public static class Todos
         validator.ValidateAndThrow(todo);
     }
     
-    private static void VerifyTodo(TodoItem? todo, HttpContext context)
+    private static void ValidateOwnership(Guid todoOwner, HttpContext context)
     {
-        if (todo is null)
-            throw new NotFoundException(
-                DefaultErrorMessages.TodoNotFoundError,
-                DefaultErrorMessages.TodoNotFoundMessage);
-        
         var userId = GetUserId(context);
-        
-        if (todo.UserId != userId)
+        if (todoOwner != userId)
             throw new ForbiddenException(
                 DefaultErrorMessages.ForbiddenError,
                 DefaultErrorMessages.ForbiddenTodoMessage);
+    }
+
+    private static TodoDto ConvertToDto(TodoItem todo)
+    {
+        var todoDto = new TodoDto
+        {
+            Name = todo.Name,
+            Description = todo.Description,
+            CreatedAt = todo.CreatedAt,
+            UpdatedAt = todo.UpdatedAt,
+            Status = todo.Status,
+            Id = todo.Id
+        };
+        return todoDto;
     }
 }

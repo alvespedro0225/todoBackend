@@ -5,6 +5,8 @@ using Application.Common.Repositories;
 using Application.Services.Common;
 using Domain.Entities;
 using Domain.Exceptions;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Services.Auth.Commands;
@@ -18,21 +20,25 @@ public sealed class AuthCommandService(
 {
     private readonly int _refreshExpirationTime = configuration.GetValue<int>("Jwt:RefreshExpirationInMinutes");
     
-    public AuthResponse Register(RegisterCommandRequest registerCommandRequest)
+    public async Task<AuthResponse> RegisterUser(RegisterCommandRequest registerCommandRequest)
     {
-        if (userRepository.GetUser(registerCommandRequest.Email) is not null)
+        if (await userRepository.UserExists(registerCommandRequest.Email))
             throw new UnprocessableEntityException("Email already registered", "Please use another email");
+
+        var passwordHasher = new PasswordHasher<User>();
         
         var user = new User
         {
+            Id = Guid.NewGuid(),
             Name = registerCommandRequest.Name,
             Email = registerCommandRequest.Email,
-            Password = registerCommandRequest.Password,
+            PasswordHash = registerCommandRequest.Password,
             RefreshToken = tokenGenerator.GenerateRefreshToken(),
             RefreshTokenExpiration = dateTime.UtcNow.AddMinutes(_refreshExpirationTime)
         };
         
-        userRepository.AddUser(user);
+        user.PasswordHash = passwordHasher.HashPassword(user, user.PasswordHash);
+        await userRepository.AddUser(user);
         
         var response = new AuthResponse
         {
@@ -41,5 +47,36 @@ public sealed class AuthCommandService(
             UserId = user.Id
         };
         return response;
+    }
+    
+    public async Task<AuthResponse> Login(LoginCommandRequest loginCommandRequest)
+    {
+        var user = await userRepository.GetUser(loginCommandRequest.Email);
+        var passwordHasher = new PasswordHasher<User>();
+        var passwordVerificationResult = passwordHasher
+            .VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                loginCommandRequest.Password);
+        
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            throw new UnauthorizedException("Error during login", "Password and email don't match");
+        
+        user.RefreshToken = tokenGenerator.GenerateRefreshToken();
+        user.RefreshTokenExpiration = DateTime.UtcNow.AddMinutes(_refreshExpirationTime);
+        await userRepository.UpdateRefreshToken(user.RefreshToken, user.Id);
+        var response = new AuthResponse
+        {
+            AccessToken = tokenGenerator.GenerateAccessToken(user),
+            RefreshToken = user.RefreshToken,
+            UserId = user.Id
+        };
+        
+        return response;
+    }
+
+    public async Task DeleteUser(Guid userId)
+    {
+        await userRepository.DeleteUser(userId);
     }
 }

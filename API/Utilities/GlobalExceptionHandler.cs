@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Utilities;
+namespace Api.Utilities;
 
 public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
@@ -45,8 +45,6 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
                 problemDetails.Detail = GetValidationMessages(validationException.Errors);
                 problemDetails.Title = "There was an issue validating the item";
                 break;
-            
-            default: return false;
         }
 
         return await problemDetailsService.TryWriteAsync(
