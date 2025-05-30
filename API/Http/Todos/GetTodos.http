@@ -1,3 +1,0 @@
-GET {{HostAddress}}/{{TodosAddress}}/
-Accept: application/json
-Authorization: Bearer {{JWT}}

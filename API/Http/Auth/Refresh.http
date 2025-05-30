@@ -1,8 +1,0 @@
-POST {{HostAddress}}/{{AuthAddress}}/refresh/
-Accept: application/json
-Content-Type: application/json
-
-{
-  "id": "90bac3d2-c9b0-42a2-9bc5-414d8b6005db",
-  "refreshToken": "RHJ/QhlcBVLgoak1RrXQKfPjD2FwXx9jjWznfoiG1iU="
-}

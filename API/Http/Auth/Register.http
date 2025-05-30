@@ -1,9 +1,0 @@
-POST {{HostAddress}}/{{AuthAddress}}/register/
-Accept: application/json
-Content-Type: application/json
-
-{
-  "name": "Pedro",
-  "password": "{{Password}}",
-  "email": "{{Email}}"
-}

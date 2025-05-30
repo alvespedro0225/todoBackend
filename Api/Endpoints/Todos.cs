@@ -1,9 +1,10 @@
 using System.Security.Claims;
 
 using Api.Models.Request.Todos;
-using Api.Models.Response;
 using Api.Models.Response.Todos;
 using Api.Validators.Todos;
+
+using Api.Models.Response;
 
 using Application.Common.Todos.Models.Requests;
 using Application.Services.Auth.Queries;
