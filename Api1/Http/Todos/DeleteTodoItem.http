@@ -1,3 +1,0 @@
-DELETE {{HostAddress}}/{{TodosAddress}}/{{TodoId}}
-Accept: application/json
-Authorization: Bearer {{JWT}}
