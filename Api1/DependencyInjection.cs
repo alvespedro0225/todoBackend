@@ -1,8 +1,8 @@
-using Api.Utilities;
+using Api1.Endpoints;
 
-using Api.Endpoints;
+using Api1.Utilities;
 
-namespace Api;
+namespace Api1;
 
 public static class DependencyInjection
 {

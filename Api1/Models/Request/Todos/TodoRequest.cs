@@ -1,6 +1,6 @@
 using Domain.Enums;
 
-namespace Api.Models.Request.Todos;
+namespace Api1.Models.Request.Todos;
 
 public sealed record TodoRequest
 {

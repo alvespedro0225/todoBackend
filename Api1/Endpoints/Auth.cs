@@ -1,8 +1,8 @@
 using System.Security.Claims;
 
-using Api.Models.Request.Auth;
-using Api.Models.Response.Auth;
-using Api.Validators.Auth;
+using Api1.Models.Request.Auth;
+using Api1.Models.Response.Auth;
+using Api1.Validators.Auth;
 
 using Application.Common.Auth;
 using Application.Common.Auth.Models.Requests;
@@ -14,7 +14,7 @@ using Domain.Exceptions;
 
 using FluentValidation;
 
-namespace Api.Endpoints;
+namespace Api1.Endpoints;
 
 public static class Auth
 {

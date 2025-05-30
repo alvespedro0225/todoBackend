@@ -1,0 +1,4 @@
+DELETE {{HostAddress}}/{{AuthAddress}}/delete/3168A16B-4AD4-4204-99FD-212B60B872A6
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{JWT}}

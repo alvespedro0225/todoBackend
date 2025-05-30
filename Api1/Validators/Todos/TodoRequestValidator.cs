@@ -1,8 +1,8 @@
-using Api.Models.Request.Todos;
+using Api1.Models.Request.Todos;
 
 using FluentValidation;
 
-namespace Api.Validators.Todos;
+namespace Api1.Validators.Todos;
 
 internal class TodoRequestValidator : AbstractValidator<TodoRequest>
 {

@@ -1,4 +1,4 @@
-namespace Api.Models.Request.Auth;
+namespace Api1.Models.Request.Auth;
 
 public sealed record LoginRequest
 {

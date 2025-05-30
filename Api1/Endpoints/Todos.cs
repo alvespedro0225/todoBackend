@@ -1,9 +1,9 @@
 using System.Security.Claims;
 
-using Api.Models.Request.Todos;
-using Api.Models.Response;
-using Api.Models.Response.Todos;
-using Api.Validators.Todos;
+using Api1.Models.Response;
+using Api1.Models.Request.Todos;
+using Api1.Models.Response.Todos;
+using Api1.Validators.Todos;
 
 using Application.Common.Todos.Models.Requests;
 using Application.Services.Auth.Queries;
@@ -16,7 +16,7 @@ using Domain.Exceptions;
 
 using FluentValidation;
 
-namespace Api.Endpoints;
+namespace Api1.Endpoints;
 
 public static class Todos
 {

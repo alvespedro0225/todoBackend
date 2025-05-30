@@ -1,10 +1,10 @@
-using Api.Models.Request.Auth;
+using Api1.Models.Request;
 
-using Api.Models.Request;
+using Api1.Models.Request.Auth;
 
 using FluentValidation;
 
-namespace Api.Validators.Auth;
+namespace Api1.Validators.Auth;
 
 public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
